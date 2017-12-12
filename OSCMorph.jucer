@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="q57Bzf" name="OSCMorph" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.yourcompany.OSCMorph" includeBinaryInAppConfig="1"
+              cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
+  <MAINGROUP id="bvpmYj" name="OSCMorph">
+    <GROUP id="{358A6182-B931-C1D7-C8D3-DEE1052C7A57}" name="Source">
+      <GROUP id="{03E5973D-1F39-0708-1281-0FFBD86ACC4F}" name="Morpher">
+        <GROUP id="{DAA7FF93-8EBB-3C3F-2C6E-5A2C26A3081D}" name="ui">
+          <FILE id="uch2Tk" name="MorpherViewUI.cpp" compile="1" resource="0"
+                file="Source/MorpherViewUI.cpp"/>
+          <FILE id="TVqHIX" name="MorpherViewUI.h" compile="0" resource="0" file="Source/MorpherViewUI.h"/>
+          <FILE id="UctyKE" name="MorphTargetViewUI.cpp" compile="1" resource="0"
+                file="Source/MorphTargetViewUI.cpp"/>
+          <FILE id="Qa2XOH" name="MorphTargetViewUI.h" compile="0" resource="0"
+                file="Source/MorphTargetViewUI.h"/>
+        </GROUP>
+        <FILE id="Y5bkq3" name="jc_voronoi.h" compile="0" resource="0" file="Source/jc_voronoi.h"/>
+        <FILE id="tgnjtF" name="Morpher.cpp" compile="1" resource="0" file="Source/Morpher.cpp"/>
+        <FILE id="eBDLK2" name="Morpher.h" compile="0" resource="0" file="Source/Morpher.h"/>
+        <FILE id="fy5Tw0" name="MorphTarget.cpp" compile="1" resource="0" file="Source/MorphTarget.cpp"/>
+        <FILE id="S5nAUZ" name="MorphTarget.h" compile="0" resource="0" file="Source/MorphTarget.h"/>
+        <FILE id="FNVNhv" name="PresetGroup.cpp" compile="1" resource="0" file="Source/PresetGroup.cpp"/>
+        <FILE id="ohq7T2" name="PresetGroup.h" compile="0" resource="0" file="Source/PresetGroup.h"/>
+      </GROUP>
+      <GROUP id="{7D983E8E-73F4-3898-6F3F-D57DC21EE4B5}" name="Outputs">
+        <GROUP id="{70769F9A-9EFD-4670-ADB4-2520F39B9176}" name="ui">
+          <FILE id="BnWwiM" name="OSCOutputManagerUI.cpp" compile="1" resource="0"
+                file="Source/OSCOutputManagerUI.cpp"/>
+          <FILE id="iEnpAZ" name="OSCOutputManagerUI.h" compile="0" resource="0"
+                file="Source/OSCOutputManagerUI.h"/>
+        </GROUP>
+        <FILE id="Jijd3V" name="OSCOutput.cpp" compile="1" resource="0" file="Source/OSCOutput.cpp"/>
+        <FILE id="lYSpRd" name="OSCOutput.h" compile="0" resource="0" file="Source/OSCOutput.h"/>
+        <FILE id="BaFE6T" name="OSCOutputManager.cpp" compile="1" resource="0"
+              file="Source/OSCOutputManager.cpp"/>
+        <FILE id="RhN4MG" name="OSCOutputManager.h" compile="0" resource="0"
+              file="Source/OSCOutputManager.h"/>
+      </GROUP>
+      <FILE id="AYUOVn" name="MorphEngine.cpp" compile="1" resource="0" file="Source/MorphEngine.cpp"/>
+      <FILE id="h20K88" name="MorphEngine.h" compile="0" resource="0" file="Source/MorphEngine.h"/>
+      <FILE id="qBCtWh" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="wO0EZM" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="G0Ii70" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="SIfNLP" name="MainComponentCommands.cpp" compile="1" resource="0"
+            file="Source/MainComponentCommands.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="0" isDebug="1" optimisation="1" targetName="OSCMorph"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="OSCMorph"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../../Softwares/JUCE/modules"/>
+        <MODULEPATH id="juce_organicui" path="D:\Documents\Perso\Projects\JUCE Modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../../../Softwares/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2017>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_organicui" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>
