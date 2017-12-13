@@ -28,6 +28,7 @@ public:
 
 	OSCSender sender;
 	void setupSender();
+
 	void sendOSC(const OSCMessage &msg);
 
 	static OSCOutput * create() { return new OSCOutput(); }

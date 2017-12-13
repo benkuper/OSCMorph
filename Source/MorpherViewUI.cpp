@@ -105,7 +105,8 @@ void MorpherViewUI::paintBackground(Graphics & g)
 
 
 	// TEEEEEEEEEEEEEEEEEEEEEEEMP
-	/*	
+	
+	/*
 	Point<float> mp = manager->mainTarget->position->getPoint();
 
 	int index = Morpher::getInstance()->getSiteIndexForPoint(mp);
@@ -227,9 +228,9 @@ void MorpherViewUI::paintBackground(Graphics & g)
 				g.drawLine(mpVPos.x,mpVPos.y, neighboursViewPoints[i].x, neighboursViewPoints[i].y);
 			}
 		}
-		
 	}
 	*/
+	
 }
 
 void MorpherViewUI::setupBGImage()

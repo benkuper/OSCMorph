@@ -68,7 +68,6 @@ void MorphTarget::syncValuesWithModel()
 
 	for (auto &gci : Morpher::getInstance()->values->items)
 	{
-		DBG(" > " << vList[index]->niceName << " will become " << gci->niceName);
 		vList[index]->setNiceName(gci->niceName);
 		Parameter * p = dynamic_cast<Parameter *>(gci->controllable);
 		vList[index]->setRange(p->minimumValue, p->maximumValue);

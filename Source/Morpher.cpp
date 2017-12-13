@@ -251,8 +251,8 @@ void Morpher::computeWeights()
 		switch (i->controllable->type)
 		{
 		case Controllable::FLOAT:
-			{
-			
+		{
+
 			float val = 0;
 			for (MorphTarget * imt : items)
 			{
@@ -263,23 +263,51 @@ void Morpher::computeWeights()
 
 			//DBG("Assign final value : " << i->controllable->shortName << " / " << val);
 			((FloatParameter *)i->controllable)->setValue(val);
-			}
-			break;
-
-			/*
-		case Controllable::INT:
-		{
-			float val = 0;
-			for (MorphTarget * imt : items) val += ((IntParameter *)imt->values.getControllableByName(i->shortName))->floatValue() * imt->weight->floatValue();
-			((IntParameter *)i->controllable)->setValue((int)val);
 		}
 		break;
-		*/
-                
-            default:
-                break;
-		}
 
+		case Controllable::POINT2D:
+		{
+
+			Point<float> pVal;
+			for (MorphTarget * imt : items)
+			{
+				Point2DParameter * tC = (Point2DParameter *)imt->values.getControllableByName(i->controllable->shortName);
+				if (tC != nullptr) pVal += tC->getPoint() * imt->weight->floatValue() / totalWeight;
+				else DBG("Controllable null with name : " << i->controllable->shortName);
+			}
+
+			//DBG("Assign final value : " << i->controllable->shortName << " / " << val);
+			((Point2DParameter *)i->controllable)->setPoint(pVal);
+		}
+		break;
+
+
+		case Controllable::COLOR:
+		{
+			float r = 0, g = 0, b = 0, a = 0;
+			for (MorphTarget * imt : items)
+			{
+				ColorParameter * tC = (ColorParameter *)imt->values.getControllableByName(i->controllable->shortName);
+				if (tC != nullptr)
+				{
+					float fac = imt->weight->floatValue() / totalWeight;
+					Colour c = tC->getColor();
+					r += c.getFloatRed() * fac;
+					g += c.getFloatGreen() * fac;
+					b += c.getFloatBlue() * fac;
+					a += c.getFloatAlpha() * fac;
+				} else DBG("Controllable null with name : " << i->controllable->shortName);
+			}
+
+			//DBG("Assign final value : " << i->controllable->shortName << " / " << val);
+			((ColorParameter *)i->controllable)->setColor(Colour::fromFloatRGBA(r, g, b, a));
+		}
+		break;
+
+		default:
+			break;
+		}
 	}
 
 	morpherListeners.call(&MorpherListener::weightsUpdated);

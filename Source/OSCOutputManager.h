@@ -23,6 +23,9 @@ public:
 	OSCOutputManager();
 	~OSCOutputManager();
 
+	BoolParameter * autoSlipComplexParams;
+	BoolParameter * sendColorNativeOSC;
+
 	void sendMessage(const OSCMessage &m);
 	OSCArgument varToArgument(const var & v);
 
