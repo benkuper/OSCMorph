@@ -34,6 +34,7 @@ public:
 	var getJSONData() override;
 	void loadJSONDataInternal(var data) override;
 
+	void controllableFeedbackUpdate(ControllableContainer * cc, Controllable * c) override;
 
 	void itemAdded(GenericControllableItem * item) override;
 	void itemRemoved(GenericControllableItem * item) override;

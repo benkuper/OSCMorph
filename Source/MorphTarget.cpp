@@ -40,6 +40,8 @@ MorphTarget::MorphTarget(const String &name) :
 	{
 		values.hideInEditor = true;
 	}
+
+	syncValuesWithModel();
 	
 }
 
@@ -85,6 +87,14 @@ void MorphTarget::loadJSONDataInternal(var data)
 {
 	BaseItem::loadJSONDataInternal(data); 
 	values.loadJSONData(data.getProperty("values",var()), true);
+}
+
+void MorphTarget::controllableFeedbackUpdate(ControllableContainer * cc, Controllable * c)
+{
+	if (cc == &values)
+	{
+		Morpher::getInstance()->computeWeights();
+	}
 }
 
 void MorphTarget::itemAdded(GenericControllableItem * item)

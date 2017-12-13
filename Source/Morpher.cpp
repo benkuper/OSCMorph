@@ -159,8 +159,7 @@ void Morpher::computeWeights()
 			Line<float> line(Point<float>(edge->pos[0].x, edge->pos[0].y), Point<float>(edge->pos[1].x, edge->pos[1].y));
 			Point<float> np;
 			float distToEdge = line.getDistanceFromPoint(mp, np);
-			Point<float> sp;
-			float distNeighbourToEdge = line.getDistanceFromPoint(Point<float>(ns->p.x, ns->p.y), sp);
+			float distNeighbourToEdge = np.getDistanceFrom(Point<float>(ns->p.x, ns->p.y));
 
 			edges.add(edge);
 
@@ -179,11 +178,12 @@ void Morpher::computeWeights()
 		{
 			float edgeDist = edgeDists[i];
 			float edgeNDist = edgeNeighbourDists[i];
-			float totalDist = edgeDist + edgeNDist; //mp.getDistanceFrom(neighbourPos); //if we want to check direct distance instead of path to point
-
-													//Get min distance to non common-site edge
+			float totalDist = edgeDist + edgeNDist; 
+			
+													
 			float minOtherEdgeDist = (float)INT_MAX;
 			jcv_graphedge * minEdge = nullptr;
+
 			for (int j = 0; j < edges.size(); j++)
 			{
 				if (i == j) continue;
@@ -199,9 +199,16 @@ void Morpher::computeWeights()
 			}
 
 
-			float ratio = 1;
-			if (minEdge != nullptr) ratio = 1 - (edgeDist / (edgeDist + minOtherEdgeDist));
-			float w = ratio / totalDist;
+			float w = 0;
+			if (minEdge != nullptr)
+			{
+				float ratio = 1 - (edgeDist / (edgeDist + minOtherEdgeDist));
+				w = ratio / totalDist;
+			} else
+			{ 
+				float directDist = mp.getDistanceFrom(Point<float>(neighbourSites[i]->p.x, neighbourSites[i]->p.y)); //if we want to check direct distance instead of path to point
+				w = 1.0f / directDist;
+			}
 
 			MorphTarget * nmt = items[neighbourSites[i]->index];
 			rawWeights.set(nmt, w);
