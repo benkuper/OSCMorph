@@ -29,6 +29,8 @@ public:
 
 	void addValueFromItem(GenericControllableItem * item);
 
+	void syncValuesWithModel();
+
 	var getJSONData() override;
 	void loadJSONDataInternal(var data) override;
 

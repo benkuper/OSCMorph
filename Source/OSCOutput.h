@@ -13,8 +13,8 @@
 #include "JuceHeader.h"
 
 class OSCOutput :
-	public BaseItem
-	//public OSCReceiver::Listener<OSCReceiver::RealtimeCallback>
+	public BaseItem,
+	public OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>
 {
 public:
 	OSCOutput(const String &name = "OSC", int defaultRemotePort = 9000);
@@ -32,13 +32,19 @@ public:
 
 	static OSCOutput * create() { return new OSCOutput(); }
 
-	/*
+	
 	OSCReceiver receiver;
 	void setupReceiver();
 	void processMessage(const OSCMessage &msg);
 
+	float getFloatArg(OSCArgument a);
+	int getIntArg(OSCArgument a);
+	String getStringArg(OSCArgument a);
+	static var argumentToVar(const OSCArgument &a);
+
+
 	virtual void oscMessageReceived(const OSCMessage & message) override;
 	virtual void oscBundleReceived(const OSCBundle & bundle) override;
-	*/
+	
 };
 

@@ -49,6 +49,9 @@ public:
 
 	bool checkSitesAreNeighbours(jcv_site * s1, jcv_site * s2);
 
+	void setTargetPosition(float x, float y);
+
+
 	//debug
 	//IntParameter * curZoneIndex;
 
@@ -58,6 +61,10 @@ public:
 	void onContainerParameterChanged(Parameter * p) override;
 
 	void controllableFeedbackUpdate(ControllableContainer * cc, Controllable * c) override;
+	void childStructureChanged(ControllableContainer * cc) override;
+
+	var getJSONData() override;
+	void loadJSONDataInternal(var data) override;
 
 	class MorpherListener
 	{

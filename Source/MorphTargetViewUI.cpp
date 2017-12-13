@@ -55,6 +55,13 @@ void MorphTargetViewUI::resized()
 	grabber->setBounds(getLocalBounds().withSizeKeepingCentre(15,15));
 	
 }
+ 
+void MorphTargetViewUI::controllableFeedbackUpdateInternal(Controllable * c)
+{
+	BaseItemUI::controllableFeedbackUpdateInternal(c);
+	//if(c == item->weight) repaint();
+}
+
 
 MorphTargetViewUI::MGrabber::MGrabber() :
 	handleColor(Colours::yellow)

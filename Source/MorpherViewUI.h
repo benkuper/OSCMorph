@@ -29,7 +29,10 @@ public:
 
 	void setupBGImage();
 
-	void updateViewUIPosition(MorphTargetViewUI * mtvui) override;
+	void resized() override;
+
+
+	virtual void itemUIGrabbed(BaseItemUI<MorphTarget> * se) override;
 
 	void newMessage(const ContainerAsyncEvent &e) override;
 	void controllableFeedbackUpdateAsync(ControllableContainer * cc, Controllable * c);

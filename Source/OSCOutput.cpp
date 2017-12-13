@@ -9,6 +9,7 @@
 */
 
 #include "OSCOutput.h"
+#include "Morpher.h"
 
 OSCOutput::OSCOutput(const String & name, int defaultRemotePort) :
 	BaseItem(name)
@@ -22,8 +23,10 @@ OSCOutput::OSCOutput(const String & name, int defaultRemotePort) :
 	localPort->hideInOutliner = true;
 	localPort->isTargettable = false;
 
+	receiver.addListener(this);
+
 	setupSender();
-	//setupReceiver();
+	setupReceiver();
 }
 
 void OSCOutput::setupSender()
@@ -35,6 +38,7 @@ void OSCOutput::setupSender()
 
 void OSCOutput::sendOSC(const OSCMessage & msg)
 {
+	if (!enabled->boolValue()) return;
 	/*
 	if (logOutgoingData->boolValue())
 	{
@@ -47,7 +51,6 @@ void OSCOutput::sendOSC(const OSCMessage & msg)
 
 
 
-/*
 void OSCOutput::setupReceiver()
 {
 bool result = receiver.connect(localPort->intValue());
@@ -71,16 +74,28 @@ NLOG(niceName, s);
 
 void OSCOutput::processMessage(const OSCMessage & msg)
 {
+	if (!enabled->boolValue()) return;
+
 	String address = msg.getAddressPattern().toString();
-	if (address == "/vibrate")
+	DBG("Receive : " << address << " with " << msg.size() << " args");
+	if (address == "/target/position" || address == "/3/xy") //default simple layout for touchosc
 	{
-		if (msg.size() >= 3)
+		if (msg.size() >= 2)
 		{
-			int controllerId = msg[0].getInt32();
-			float strength = msg[1].getFloat32();
-			float duration = msg[2].getFloat32();
-			SourcesManager::getInstance()->vibrateController(controllerId, strength, duration);
+			Morpher::getInstance()->setTargetPosition(getFloatArg(msg[0]) - .5f, getFloatArg(msg[1]) - .5f);
 		}
+	} else
+	{
+		String id = address.substring(1);
+		
+		MorphTarget * mt = Morpher::getInstance()->getItemWithName(id, true);
+
+		if (mt != nullptr && msg.size() >= 1 && Morpher::getInstance()->blendMode->getValueDataAsEnum<Morpher::BlendMode>() == Morpher::Weights)
+		{
+			mt->weight->setValue(getFloatArg(msg[0]));
+		}
+
+		Morpher::getInstance()->computeWeights();
 	}
 }
 
@@ -98,4 +113,36 @@ void OSCOutput::oscBundleReceived(const OSCBundle & bundle)
 		processMessage(m.getMessage());
 	}
 }
-*/
+
+
+float OSCOutput::getFloatArg(OSCArgument a)
+{
+	if (a.isFloat32()) return a.getFloat32();
+	if (a.isInt32()) return (float)a.getInt32();
+	if (a.isString()) return a.getString().getFloatValue();
+	return 0;
+}
+
+int OSCOutput::getIntArg(OSCArgument a)
+{
+	if (a.isInt32()) return a.getInt32();
+	if (a.isFloat32()) return roundFloatToInt(a.getFloat32());
+	if (a.isString()) return a.getString().getIntValue();
+	return 0;
+}
+
+String OSCOutput::getStringArg(OSCArgument a)
+{
+	if (a.isString()) return a.getString();
+	if (a.isInt32()) return String(a.getInt32());
+	if (a.isFloat32()) return String(a.getFloat32());
+	return String::empty;
+}
+
+var OSCOutput::argumentToVar(const OSCArgument & a)
+{
+	if (a.isFloat32()) return var(a.getFloat32());
+	else if (a.isInt32()) return var(a.getInt32());
+	else if (a.isString()) return var(a.getString());
+	return var("error");
+}

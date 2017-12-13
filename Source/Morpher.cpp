@@ -116,7 +116,7 @@ void Morpher::computeWeights()
 		if (index == -1) break;
 
 
-				
+
 		const jcv_site * sites = jcv_diagram_get_sites(diagram);
 		jcv_site s = sites[index];
 
@@ -131,8 +131,8 @@ void Morpher::computeWeights()
 		rawWeights.set(mt, mw);
 		totalRawWeight += mw;
 
-		
-		
+
+
 		//Fill edge distances
 
 		jcv_graphedge * edge = s.edges;
@@ -143,7 +143,7 @@ void Morpher::computeWeights()
 		Array<jcv_site *> neighbourSites;
 		Array<Line<float>> edgeLines;
 
-		while(edge != nullptr)
+		while (edge != nullptr)
 		{
 			jcv_site * ns = edge->neighbor;// e->sites[0]->index == s.index ? e->sites[1] : e->sites[0];
 
@@ -173,21 +173,21 @@ void Morpher::computeWeights()
 		}
 
 		//DBG("Num edges to test " << edges.size());
-		
+
 		//Compute weight for each neighbour
-		for(int i=0;i<edges.size();i++)
+		for (int i = 0; i<edges.size(); i++)
 		{
 			float edgeDist = edgeDists[i];
 			float edgeNDist = edgeNeighbourDists[i];
 			float totalDist = edgeDist + edgeNDist; //mp.getDistanceFrom(neighbourPos); //if we want to check direct distance instead of path to point
 
-			//Get min distance to non common-site edge
+													//Get min distance to non common-site edge
 			float minOtherEdgeDist = (float)INT_MAX;
 			jcv_graphedge * minEdge = nullptr;
 			for (int j = 0; j < edges.size(); j++)
 			{
 				if (i == j) continue;
-				
+
 				if (checkSitesAreNeighbours(edges[i]->neighbor, edges[j]->neighbor)) continue;
 
 				float ed = edgeDists[j];
@@ -203,7 +203,7 @@ void Morpher::computeWeights()
 			if (minEdge != nullptr) ratio = 1 - (edgeDist / (edgeDist + minOtherEdgeDist));
 			float w = ratio / totalDist;
 
-			MorphTarget * nmt = items[neighbourSites[i]->index]; 
+			MorphTarget * nmt = items[neighbourSites[i]->index];
 			rawWeights.set(nmt, w);
 			totalRawWeight += w;
 		}
@@ -216,12 +216,27 @@ void Morpher::computeWeights()
 		{
 			i.getKey()->weight->setValue(i.getValue() / totalRawWeight);
 		}
-
+		
 		break;
+
+		/*
+	case Weights:
+		//nothing to do
+		break;
+
+	default:
+		break;
+		*/
 	}
 
 
+	
 	//Assign values from weights
+	float totalWeight = 0;
+	for (MorphTarget * imt : items) totalWeight += imt->weight->floatValue();
+
+	//DBG("totalWeight : " << totalWeight);
+	
 	for (GenericControllableItem * i : values->items)
 	{
 		switch (i->controllable->type)
@@ -233,10 +248,11 @@ void Morpher::computeWeights()
 			for (MorphTarget * imt : items)
 			{
 				FloatParameter * tC = (FloatParameter *)imt->values.getControllableByName(i->controllable->shortName);
-				if (tC != nullptr) val += tC->floatValue() * imt->weight->floatValue();
-				else DBG("Controllable null with name : " << tC->shortName);
+				if (tC != nullptr) val += tC->floatValue() * imt->weight->floatValue() / totalWeight;
+				else DBG("Controllable null with name : " << i->controllable->shortName);
 			}
-			DBG("Assign final value : " << i->controllable->shortName << " / " << val);
+
+			//DBG("Assign final value : " << i->controllable->shortName << " / " << val);
 			((FloatParameter *)i->controllable)->setValue(val);
 			}
 			break;
@@ -251,6 +267,7 @@ void Morpher::computeWeights()
 		break;
 		*/
 		}
+
 	}
 
 	morpherListeners.call(&MorpherListener::weightsUpdated);
@@ -265,6 +282,11 @@ bool Morpher::checkSitesAreNeighbours(jcv_site * s1, jcv_site * s2)
 		e = e->next;
 	}
 	return false;
+}
+
+void Morpher::setTargetPosition(float x, float y)
+{
+	mainTarget->position->setPoint(Point<float>(x, y)*bgScale->floatValue());
 }
 
 
@@ -313,5 +335,26 @@ void Morpher::controllableFeedbackUpdate(ControllableContainer * cc, Controllabl
 		}
 	}
 	
+}
+
+void Morpher::childStructureChanged(ControllableContainer * cc)
+{
+	if (cc == values)
+	{
+		for (auto &mt : items) mt->syncValuesWithModel();
+	}
+}
+
+var Morpher::getJSONData()
+{
+	var data = BaseManager::getJSONData();
+	data.getDynamicObject()->setProperty("values", values->getJSONData());
+	return data;
+}
+
+void Morpher::loadJSONDataInternal(var data)
+{
+	values->loadJSONData(data.getProperty("values", var()));
+	BaseManager::loadJSONDataInternal(data);
 }
 

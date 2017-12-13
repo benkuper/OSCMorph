@@ -23,10 +23,8 @@ MorpherViewUI::MorpherViewUI(const String & contentName, Morpher * _manager) :
 	mainTargetUI->addItemUIListener(this);
 	addAndMakeVisible(mainTargetUI);
 
-	updateViewUIPosition(mainTargetUI);
 	
 	addExistingItems();
-
 }
 
 MorpherViewUI::~MorpherViewUI()
@@ -40,8 +38,12 @@ void MorpherViewUI::paintBackground(Graphics & g)
 	BaseManagerShapeShifterViewUI::paintBackground(g);
 	
 	//Voronoi
-	if (manager->blendMode->getValueDataAsEnum<Morpher::BlendMode>() == Morpher::Voronoi && manager->diagram != nullptr && manager->items.size() > 0)
+	switch(manager->blendMode->getValueDataAsEnum<Morpher::BlendMode>())
 	{
+		
+	case Morpher::Voronoi:
+		if (manager->diagram == nullptr || manager->items.size() == 0) break;
+
 		const jcv_site * sites = jcv_diagram_get_sites(manager->diagram);
 		for (int i = 0; i < manager->items.size(); i++)
 		{
@@ -70,16 +72,21 @@ void MorpherViewUI::paintBackground(Graphics & g)
 			}
 			p.closeSubPath();
 			g.fillPath(p);
-
-			Point<float> np = getPosInView(Point<float>(s.p.x, s.p.y));
-			Rectangle<float> wr(np.x-30,np.y-30, 60, 60);
-			float tSize = wr.getWidth() * target->weight->floatValue();
-			g.setColour(c.brighter().withAlpha(.6f));
-			g.fillEllipse(wr.withSizeKeepingCentre(tSize,tSize));
-			g.setColour(c.brighter());
-			g.drawEllipse(wr, 2);
 		}
 	}
+
+	for (MorphTarget * target : manager->items)
+	{
+		Point<float> np = getPosInView(target->position->getPoint());
+		Rectangle<float> wr(np.x - 30, np.y - 30, 60, 60);
+		float tSize = wr.getWidth() * target->weight->floatValue();
+		Colour c = target->color->getColor();
+		g.setColour(c.brighter().withAlpha(.6f));
+		g.fillEllipse(wr.withSizeKeepingCentre(tSize, tSize));
+		g.setColour(c.brighter());
+		g.drawEllipse(wr, 2);
+	}
+	
 
 
 	//BG Image
@@ -98,11 +105,18 @@ void MorpherViewUI::setupBGImage()
 	repaint();
 }
 
-void MorpherViewUI::updateViewUIPosition(MorphTargetViewUI * mtvui)
+void MorpherViewUI::resized()
 {
-	BaseManagerShapeShifterViewUI::updateViewUIPosition(mtvui);
-	mtvui->item->position->setPoint((mtvui->item->viewUIPosition->getPoint()+mtvui->getLocalBounds().getCentre().toFloat()) / getUnitSize());
+	BaseManagerShapeShifterViewUI::resized();
+	updateViewUIPosition(mainTargetUI);
 }
+
+void MorpherViewUI::itemUIGrabbed(BaseItemUI<MorphTarget>* se)
+{
+	BaseManagerShapeShifterViewUI::itemUIGrabbed(se);
+	se->item->position->setPoint((se->item->viewUIPosition->getPoint() + se->getLocalBounds().getCentre().toFloat()) / getUnitSize());
+}
+
 
 void MorpherViewUI::newMessage(const ContainerAsyncEvent & e)
 {
@@ -120,10 +134,19 @@ void MorpherViewUI::controllableFeedbackUpdateAsync(ControllableContainer * cc, 
 	else if (c == manager->bgOpacity)	 repaint();
 	else if (c == manager->bgScale)		 repaint();
 	else if (c == manager->diagramOpacity)		 repaint();
-	else if (cc == manager->mainTarget.get())
+	else if (c == manager->mainTarget->position)
 	{
-		updateViewUIPosition(mainTargetUI);
-		repaint();
+		//DBG("position changed : " << manager->mainTarget->position->getPoint().toString());
+		if (!mainTargetUI->isMouseOverOrDragging(true))
+		{
+
+			manager->mainTarget->viewUIPosition->setPoint((manager->mainTarget->position->getPoint() * getUnitSize()) - mainTargetUI->getLocalBounds().getCentre().toFloat());
+			updateViewUIPosition(mainTargetUI);
+		}
+		
+		//DBG("Target pos : " << manager->mainTarget->viewUIPosition->getPoint().toString());
+		//BaseManagerShapeShifterViewUI::updateViewUIPosition(mainTargetUI); //only update ui bounds, not reaffecting target's position parameter
+		//repaint();
 	}
 	else if (dynamic_cast<MorphTarget *>(c->parentContainer) != nullptr) repaint();
 	else if (c == manager->blendMode)
@@ -147,3 +170,5 @@ void MorpherViewUI::controllableFeedbackUpdateAsync(ControllableContainer * cc, 
 		repaint();
 	}
 }
+
+

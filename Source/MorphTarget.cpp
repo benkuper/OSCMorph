@@ -20,9 +20,11 @@ MorphTarget::MorphTarget(const String &name) :
 	color = new ColorParameter("Color", "color", Colour::fromHSV(rnd.nextFloat(), 1, 1, 1));
 	addParameter(color);
 
+	nameParam->hideInEditor = false;
+
 	position = addPoint2DParameter("Position", "Relative Position");
 	position->setBounds(-100, -100, 100, 100);
-	position->isEditable = false;
+	//position->hideInEditor = true;
 
 	weight = addFloatParameter("Weight", "Current weight of this target", 0, 0, 1);
 	addChildControllableContainer(&values);
@@ -32,6 +34,11 @@ MorphTarget::MorphTarget(const String &name) :
 		DBG("Add listener to morpher values");
 		Morpher::getInstance()->values->addBaseManagerListener(this);
 		for (GenericControllableItem * i : Morpher::getInstance()->values->items) addValueFromItem(i);
+		
+		position->isEditable = false;
+	} else
+	{
+		values.hideInEditor = true;
 	}
 	
 }
@@ -49,6 +56,24 @@ void MorphTarget::addValueFromItem(GenericControllableItem * item)
 	values.addControllable(c);
 }
 
+void MorphTarget::syncValuesWithModel()
+{
+	if (Morpher::getInstanceWithoutCreating() == nullptr) return;
+	Array<WeakReference<Parameter>> vList = values.getAllParameters();
+	if (vList.size() != Morpher::getInstance()->values->items.size()) return;
+
+	int index = 0;
+
+	for (auto &gci : Morpher::getInstance()->values->items)
+	{
+		DBG(" > " << vList[index]->niceName << " will become " << gci->niceName);
+		vList[index]->setNiceName(gci->niceName);
+		Parameter * p = dynamic_cast<Parameter *>(gci->controllable);
+		vList[index]->setRange(p->minimumValue, p->maximumValue);
+		index++;
+	}
+}
+
 var MorphTarget::getJSONData()
 {
 	var data = BaseItem::getJSONData();
@@ -58,22 +83,23 @@ var MorphTarget::getJSONData()
 
 void MorphTarget::loadJSONDataInternal(var data)
 {
-	BaseItem::loadJSONDataInternal(data);
-	values.loadJSONData(data, true);
+	BaseItem::loadJSONDataInternal(data); 
+	values.loadJSONData(data.getProperty("values",var()), true);
 }
 
 void MorphTarget::itemAdded(GenericControllableItem * item)
 {
-	DBG("Item added !");
 	addValueFromItem(item);
+	syncValuesWithModel();
 }
 
 void MorphTarget::itemRemoved(GenericControllableItem * item)
 {
 	if (item->controllable->type == Controllable::TRIGGER) return;
-	Controllable * c = values.getControllableByName(item->shortName);
+	Controllable * c = values.getControllableByName(item->niceName,true);
 	if (c != nullptr)
 	{
 		values.removeControllable(c);
 	}
+	syncValuesWithModel();
 }
