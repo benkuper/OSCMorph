@@ -42,6 +42,7 @@ void MorpherViewUI::paintBackground(Graphics & g)
 	{
 		
 	case Morpher::Voronoi:
+        {
 		if (manager->diagram == nullptr || manager->items.size() == 0) break;
 
 		const jcv_site * sites = jcv_diagram_get_sites(manager->diagram);
@@ -73,6 +74,9 @@ void MorpherViewUI::paintBackground(Graphics & g)
 			p.closeSubPath();
 			g.fillPath(p);
 		}
+        }
+        default:
+            break;
 	}
 
 	for (MorphTarget * target : manager->items)
@@ -256,6 +260,9 @@ void MorpherViewUI::newMessage(const ContainerAsyncEvent & e)
 	case ContainerAsyncEvent::ControllableFeedbackUpdate:
 		controllableFeedbackUpdateAsync(e.targetContainer, e.targetControllable);
 		break;
+            
+        default:
+            break;
 	}
 }
 

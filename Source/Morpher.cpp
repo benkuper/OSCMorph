@@ -105,6 +105,7 @@ void Morpher::computeWeights()
 	switch (bm)
 	{
 	case Voronoi:
+        {
 		for (MorphTarget * mt : items) mt->weight->setValue(0);
 
 		HashMap<MorphTarget *, float> rawWeights;
@@ -224,16 +225,17 @@ void Morpher::computeWeights()
 			i.getKey()->weight->setValue(i.getValue() / totalRawWeight);
 		}
 		
+        }
 		break;
-
-		/*
-	case Weights:
-		//nothing to do
-		break;
-
-	default:
-		break;
-		*/
+		
+            
+	
+        case Weights:
+            //nothing to do
+            break;
+            
+        default:
+            break;
 	}
 
 
@@ -273,6 +275,9 @@ void Morpher::computeWeights()
 		}
 		break;
 		*/
+                
+            default:
+                break;
 		}
 
 	}
