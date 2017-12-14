@@ -62,7 +62,7 @@ void OSCOutputManager::weightsUpdated()
 			OSCMessage m(targetAddress);
 			Colour c = ((ColorParameter *)p)->getColor();
 			uint32 uc = c.getRed() << 24 | c.getGreen() << 16 | c.getBlue() << 8 | c.getAlpha();
-			m.addArgument(uc);
+			m.addArgument(OSCArgument(uc));
 			sendMessage(m);
 
 		}else if (p->isComplex())
