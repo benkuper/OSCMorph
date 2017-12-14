@@ -52,7 +52,7 @@ void MorphTargetViewUI::paint(Graphics & g)
 
 	g.setColour(item->color->getColor().brighter().withAlpha(.6f));
 	g.fillEllipse(getLocalBounds().withSizeKeepingCentre(getWidth()*item->weight->floatValue(), getHeight()*item->weight->floatValue()).toFloat());
-	g.setColour(item->color->getColor().brighter().withAlpha(.8f));
+	g.setColour(item->color->getColor());
 	g.drawEllipse(getLocalBounds().reduced(1).toFloat(), 2);
 }
 
@@ -71,7 +71,7 @@ void MorphTargetViewUI::controllableFeedbackUpdateInternal(Controllable * c)
 
 
 MorphTargetViewUI::MGrabber::MGrabber() :
-	handleColor(Colours::yellow)
+	handleColor(Colours::transparentBlack)
 {
 }
 
