@@ -13,22 +13,30 @@
 MorpherViewUI::MorpherViewUI(const String & contentName, Morpher * _manager) :
 	BaseManagerShapeShifterViewUI(contentName,_manager)
 {
+	animateItemOnAdd = false;
+
 	//canNavigate = false;
 	setupBGImage();
 	manager->addAsyncContainerListener(this);
+	manager->addMorpherListener(this);
 
+	addExistingItems();
 
 	mainTargetUI = new MorphTargetViewUI(manager->mainTarget);
 	mainTargetUI->setHandleColor(Colours::red);
 	mainTargetUI->addItemUIListener(this);
+	mainTargetUI->removeBT->setVisible(false);
+	mainTargetUI->enabledBT->setVisible(false);
 	addAndMakeVisible(mainTargetUI);
+	mainTargetUI->setAlwaysOnTop(true);
 
+	mainTargetUI->setViewZoom(viewZoom);
 	
-	addExistingItems();
 }
 
 MorpherViewUI::~MorpherViewUI()
 {
+	manager->removeMorpherListener(this);
 	manager->removeAsyncContainerListener(this);
 }
 
@@ -46,11 +54,11 @@ void MorpherViewUI::paintBackground(Graphics & g)
 		if (manager->diagram == nullptr || manager->items.size() == 0) break;
 
 		const jcv_site * sites = jcv_diagram_get_sites(manager->diagram);
-		for (int i = 0; i < manager->items.size(); i++)
+		for (int i = 0; i < manager->diagram->numsites; i++)
 		{
 			jcv_site s = sites[i];
 			jcv_graphedge * e = s.edges;
-			MorphTarget * target = manager->items[s.index];
+			MorphTarget * target = manager->getEnabledTargetAtIndex(s.index);
 			Colour c = target->color->getColor();
 			float alpha = manager->diagramOpacity->floatValue();
 			//if (i == manager->curZoneIndex->intValue()) alpha = jmin<float>(alpha*2,1);
@@ -79,19 +87,6 @@ void MorpherViewUI::paintBackground(Graphics & g)
             break;
 	}
 
-	for (MorphTarget * target : manager->items)
-	{
-		Point<float> np = getPosInView(target->position->getPoint());
-		Rectangle<float> wr(np.x - 30, np.y - 30, 60, 60);
-		float tSize = wr.getWidth() * target->weight->floatValue();
-		Colour c = target->color->getColor();
-		g.setColour(c.brighter().withAlpha(.6f));
-		g.fillEllipse(wr.withSizeKeepingCentre(tSize, tSize));
-		g.setColour(c.brighter());
-		g.drawEllipse(wr, 2);
-	}
-	
-
 
 	//BG Image
 	g.setColour(Colours::white.withAlpha(manager->bgOpacity->floatValue()));
@@ -99,10 +94,6 @@ void MorpherViewUI::paintBackground(Graphics & g)
 	float th = bgImage.getHeight()*tw / bgImage.getWidth();
 	Rectangle<float> r = getBoundsInView(Rectangle<float>(-tw / 2, -th / 2, tw, th));
 	g.drawImage(bgImage, r);
-
-
-
-
 
 	// TEEEEEEEEEEEEEEEEEEEEEEEMP
 	
@@ -119,7 +110,7 @@ void MorpherViewUI::paintBackground(Graphics & g)
 		//curZoneIndex->setValue(getSiteIndexForPoint(mp));
 
 		//Compute direct site
-		MorphTarget * mt = manager->items[s.index];
+		MorphTarget * mt = manager->getEnabledTargetAtIndex(s.index);
 		float d = mp.getDistanceFrom(Point<float>(s.p.x, s.p.y));
 
 		Point<float> mpVPos = getPosInView(mp);
@@ -247,10 +238,56 @@ void MorpherViewUI::resized()
 	updateViewUIPosition(mainTargetUI);
 }
 
+void MorpherViewUI::setViewZoom(float value)
+{
+	BaseManagerViewUI::setViewZoom(value);
+	mainTargetUI->setViewZoom(value);
+	updateViewUIPosition(mainTargetUI);
+}
+
+void MorpherViewUI::weightsUpdated()
+{
+	MessageManagerLock mmLock;
+	if (mmLock.lockWasGained())
+	{
+		for (auto &mui : itemsUI) mui->repaint();
+	}
+}
+
+void MorpherViewUI::mouseDown(const MouseEvent & e)
+{
+	BaseManagerShapeShifterViewUI::mouseDown(e);
+	if (e.mods.isLeftButtonDown() && e.mods.isCommandDown())
+	{
+		manager->mainTarget->viewUIPosition->setPoint(getViewMousePosition().toFloat()/viewZoom);
+	}
+}
+
+void MorpherViewUI::mouseDrag(const MouseEvent & e)
+{
+	BaseManagerShapeShifterViewUI::mouseDrag(e);
+
+	if (e.mods.isLeftButtonDown() && e.mods.isCommandDown())
+	{
+		manager->mainTarget->viewUIPosition->setPoint(getViewMousePosition().toFloat()/viewZoom);
+	}
+}
+
+bool MorpherViewUI::keyPressed(const KeyPress & e)
+{
+	if (e.getModifiers().isCommandDown() && e.getKeyCode() == KeyPress::createFromDescription("i").getKeyCode())
+	{
+		manager->addTargetAtCurrentPosition->trigger();
+		return true;
+	}
+
+	return BaseManagerShapeShifterViewUI::keyPressed(e);
+}
+
 void MorpherViewUI::itemUIGrabbed(BaseItemUI<MorphTarget>* se)
 {
 	BaseManagerShapeShifterViewUI::itemUIGrabbed(se);
-	se->item->position->setPoint((se->item->viewUIPosition->getPoint() + se->getLocalBounds().getCentre().toFloat()) / getUnitSize());
+	se->item->position->setPoint((se->item->viewUIPosition->getPoint()) / defaultCheckerSize);
 }
 
 
@@ -279,15 +316,20 @@ void MorpherViewUI::controllableFeedbackUpdateAsync(ControllableContainer * cc, 
 		if (!mainTargetUI->isMouseOverOrDragging(true))
 		{
 
-			manager->mainTarget->viewUIPosition->setPoint((manager->mainTarget->position->getPoint() * getUnitSize()) - mainTargetUI->getLocalBounds().getCentre().toFloat());
+			manager->mainTarget->viewUIPosition->setPoint(manager->mainTarget->position->getPoint() * defaultCheckerSize);
 			updateViewUIPosition(mainTargetUI);
 		}
-		
+
 		//DBG("Target pos : " << manager->mainTarget->viewUIPosition->getPoint().toString());
 		//BaseManagerShapeShifterViewUI::updateViewUIPosition(mainTargetUI); //only update ui bounds, not reaffecting target's position parameter
 		//repaint();
 	}
-	else if (dynamic_cast<MorphTarget *>(c->parentContainer) != nullptr) repaint();
+	else if (dynamic_cast<MorphTarget *>(c->parentContainer) != nullptr)
+	{
+		MorphTarget * t = dynamic_cast<MorphTarget *>(c->parentContainer);
+		if (c == t->position || c == t->color || c == t->enabled) repaint();
+		//
+	}
 	else if (c == manager->blendMode)
 	{
 		Morpher::BlendMode bm = manager->blendMode->getValueDataAsEnum<Morpher::BlendMode>();
@@ -307,6 +349,22 @@ void MorpherViewUI::controllableFeedbackUpdateAsync(ControllableContainer * cc, 
 		}
 
 		repaint();
+	} else if (c == manager->targetSize)
+	{
+		float s = Morpher::getInstance()->targetSize->floatValue();
+		for (auto &mui : itemsUI)
+		{
+			mui->margin = 0;
+			mui->headerHeight = 15;
+			mui->grabberHeight = 0;
+			mui->resizerHeight = 0;
+			mui->resizerWidth = 0;
+			mui->headerGap = 0;
+			mui->setContentSize(s, s-mui->headerHeight);
+			mui->item->viewUIPosition->setPoint(mui->item->position->getPoint() * defaultCheckerSize);
+			updateViewUIPosition(mui);
+		}
+		
 	}
 }
 

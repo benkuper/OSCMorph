@@ -27,6 +27,8 @@ public:
 	void paint(Graphics &g) override;
 	void resized() override;
 
+	void updateMiniModeUI() override {} //do nothing, no minimode
+
 	void controllableFeedbackUpdateInternal(Controllable * c) override;
 
 	class MGrabber : public BaseItemUI::Grabber

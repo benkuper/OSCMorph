@@ -15,7 +15,8 @@
 
 class MorpherViewUI :
 	public BaseManagerShapeShifterViewUI<Morpher, MorphTarget, MorphTargetViewUI>,
-	public ControllableContainer::ContainerAsyncListener
+	public ControllableContainer::ContainerAsyncListener,
+	public Morpher::MorpherListener
 {
 public:
 	MorpherViewUI(const String &contentName, Morpher * _manager);
@@ -31,6 +32,13 @@ public:
 
 	void resized() override;
 
+	void setViewZoom(float value) override;
+	
+	void weightsUpdated() override;
+
+	void mouseDown(const MouseEvent &e) override;
+	void mouseDrag(const MouseEvent &e) override;
+	bool keyPressed(const KeyPress &e) override;
 
 	virtual void itemUIGrabbed(BaseItemUI<MorphTarget> * se) override;
 

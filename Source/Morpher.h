@@ -25,18 +25,23 @@ public:
 	Morpher();
 	~Morpher();
 
+	//ui
 	StringParameter * bgImagePath;
 	FloatParameter * bgOpacity;
 	FloatParameter * bgScale;
 	FloatParameter * diagramOpacity;
+	FloatParameter * targetSize;
 
 	ScopedPointer<MorphTarget> mainTarget;
 
+	Trigger * addTargetAtCurrentPosition;
 
 	enum BlendMode {Voronoi, Weights, GradientBand};
 	EnumParameter * blendMode;
 
 	Array<Point<float>> getNormalizedTargetPoints();
+	MorphTarget * getEnabledTargetAtIndex(int index);
+
 	ScopedPointer<jcv_diagram> diagram;
 
 	ScopedPointer<GenericControllableManager> values;
@@ -59,6 +64,7 @@ public:
 	void removeItemInternal(MorphTarget * mt) override;
 
 	void onContainerParameterChanged(Parameter * p) override;
+	void onContainerTriggerTriggered(Trigger * t) override;
 
 	void controllableFeedbackUpdate(ControllableContainer * cc, Controllable * c) override;
 	void childStructureChanged(ControllableContainer * cc) override;
@@ -78,7 +84,7 @@ public:
 	void addMorpherListener(MorpherListener* newListener) { morpherListeners.add(newListener); }
 	void removeMorpherListener(MorpherListener* listener) { morpherListeners.remove(listener); }
 
-	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Morpher)	
 };
 
 #endif

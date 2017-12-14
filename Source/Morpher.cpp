@@ -17,6 +17,9 @@ Morpher::Morpher() :
 {
 	isSelectable = true;
 
+
+	diagram = new jcv_diagram();
+	
 	blendMode = addEnumParameter("BlendMode", "Mode for value blending");
 	blendMode->addOption("Voronoi", Voronoi)->addOption("Weights", Weights)->addOption("Gradient Band", GradientBand);
 
@@ -25,7 +28,10 @@ Morpher::Morpher() :
 	bgOpacity = addFloatParameter("Background Opacity", "", 1);
 	diagramOpacity = addFloatParameter("Diagram Opacity", "Opacity of the Voronoi Diagram", .2f, 0, 1);
 
+	targetSize = addFloatParameter("Targets Size", "Size of the targets", 50, 10, 100);
 	//curZoneIndex = addIntParameter("Current Site", "",-1,-1,20);
+
+	addTargetAtCurrentPosition = addTrigger("Add Target at Position", "Add a new target at the handle's position with current values");
 
 	mainTarget = new MorphTarget();
 	mainTarget->color->setColor(Colours::white);
@@ -35,25 +41,36 @@ Morpher::Morpher() :
 	values = new GenericControllableManager("Values");
 	values->setCustomShortName("values");
 	addChildControllableContainer(values);
+	
 }
 
 Morpher::~Morpher()
 {
+	if (diagram->internal != nullptr && diagram->internal->memctx != nullptr) jcv_diagram_free(diagram);
 }
 
 Array<Point<float>> Morpher::getNormalizedTargetPoints()
 {
 	Array<Point<float>> result;
-	for (MorphTarget * mt : items) result.add(mt->position->getPoint());
+	for (MorphTarget * mt : items) if(mt->enabled->boolValue()) result.add(mt->position->getPoint());
 	return result;
 }
 
+MorphTarget * Morpher::getEnabledTargetAtIndex(int index)
+{
+	int i = 0;
+	for (auto &mt : items)
+	{
+		if (!mt->enabled->boolValue()) continue;
+		if (i == index) return mt;
+		i++;
+	}
+	return nullptr;
+}
 
 
 void Morpher::computeZones()
 {
-
-	diagram = new jcv_diagram();
 	Array<Point<float>> points = getNormalizedTargetPoints();
 
 	if (points.size() == 0) return;
@@ -68,6 +85,7 @@ void Morpher::computeZones()
 		jPoints.add(jp);
 	}
 
+	if(diagram->internal != nullptr && diagram->internal->memctx != nullptr) jcv_diagram_free(diagram);
 	jcv_diagram_generate(points.size(), jPoints.getRawDataPointer(), nullptr, diagram);
 
 	computeWeights();
@@ -78,7 +96,6 @@ int Morpher::getSiteIndexForPoint(Point<float> p)
 	if (diagram == nullptr) return -1;
 
 	if (diagram->numsites == 0) return -1;
-
 	const jcv_site * sites = jcv_diagram_get_sites(diagram);
 
 	float minDist = p.getDistanceFrom(Point<float>(sites[0].p.x,sites[0].p.y));
@@ -100,12 +117,14 @@ int Morpher::getSiteIndexForPoint(Point<float> p)
 
 void Morpher::computeWeights()
 {
+
 	BlendMode bm = blendMode->getValueDataAsEnum<BlendMode>();
 
 	switch (bm)
 	{
 	case Voronoi:
         {
+		if (diagram->numsites <= 1) break;
 		for (MorphTarget * mt : items) mt->weight->setValue(0);
 
 		HashMap<MorphTarget *, float> rawWeights;
@@ -116,15 +135,14 @@ void Morpher::computeWeights()
 		int index = getSiteIndexForPoint(mp);
 		if (index == -1) break;
 
-
-
 		const jcv_site * sites = jcv_diagram_get_sites(diagram);
+		
 		jcv_site s = sites[index];
 
 		//curZoneIndex->setValue(getSiteIndexForPoint(mp));
 
 		//Compute direct site
-		MorphTarget * mt = items[s.index];
+		MorphTarget * mt = getEnabledTargetAtIndex(s.index);
 		float d = mp.getDistanceFrom(Point<float>(s.p.x, s.p.y));
 
 		float mw = (float)INT_MAX;
@@ -211,7 +229,7 @@ void Morpher::computeWeights()
 				w = 1.0f / directDist;
 			}
 
-			MorphTarget * nmt = items[neighbourSites[i]->index];
+			MorphTarget * nmt = getEnabledTargetAtIndex(neighbourSites[i]->index);
 			rawWeights.set(nmt, w);
 			totalRawWeight += w;
 		}
@@ -342,6 +360,7 @@ void Morpher::removeItemInternal(MorphTarget * mt)
 
 void Morpher::onContainerParameterChanged(Parameter * p)
 {
+
 	if (p == blendMode)
 	{
 		BlendMode bm = blendMode->getValueDataAsEnum<BlendMode>();
@@ -361,6 +380,16 @@ void Morpher::onContainerParameterChanged(Parameter * p)
 	}
 }
 
+void Morpher::onContainerTriggerTriggered(Trigger * t)
+{
+	if (t == addTargetAtCurrentPosition)
+	{
+		MorphTarget * mt = addItem();
+		mt->syncValuesWithModel(true);
+		mt->viewUIPosition->setPoint(mainTarget->viewUIPosition->getPoint());
+	}
+}
+
 void Morpher::controllableFeedbackUpdate(ControllableContainer * cc, Controllable * c)
 {
 	if (cc == mainTarget)
@@ -371,7 +400,7 @@ void Morpher::controllableFeedbackUpdate(ControllableContainer * cc, Controllabl
 		MorphTarget * mt = dynamic_cast<MorphTarget *>(cc);
 		if (mt != nullptr && mt != mainTarget)
 		{
-			if(c == mt->position) computeZones();
+			if(c == mt->position || c == mt->enabled) computeZones();
 		}
 	}
 	
