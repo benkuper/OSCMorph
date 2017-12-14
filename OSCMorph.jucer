@@ -83,9 +83,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="eA4Ao1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" enablePluginBinaryCopyStep="1" isDebug="1" optimisation="1"
-                       linkTimeOptimisation="0" targetName="OSCMorph"/>
+                       linkTimeOptimisation="0" targetName="OSCMorph" osxCompatibility="10.9 SDK"/>
         <CONFIGURATION name="Release" enablePluginBinaryCopyStep="1" isDebug="0" optimisation="3"
-                       linkTimeOptimisation="1" targetName="OSCMorph"/>
+                       linkTimeOptimisation="1" targetName="OSCMorph" osxCompatibility="10.9 SDK"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../juce"/>
