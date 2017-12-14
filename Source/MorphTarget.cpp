@@ -58,7 +58,7 @@ void MorphTarget::addValueFromItem(GenericControllableItem * item)
 	values.addControllable(c);
 }
 
-void MorphTarget::syncValuesWithModel()
+void MorphTarget::syncValuesWithModel(bool syncValues)
 {
 	if (Morpher::getInstanceWithoutCreating() == nullptr) return;
 	Array<WeakReference<Parameter>> vList = values.getAllParameters();
@@ -71,6 +71,7 @@ void MorphTarget::syncValuesWithModel()
 		vList[index]->setNiceName(gci->niceName);
 		Parameter * p = dynamic_cast<Parameter *>(gci->controllable);
 		vList[index]->setRange(p->minimumValue, p->maximumValue);
+		if (syncValues) vList[index]->setValue(p->value);
 		index++;
 	}
 }
