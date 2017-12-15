@@ -33,7 +33,7 @@ Morpher::Morpher() :
 
 	addTargetAtCurrentPosition = addTrigger("Add Target at Position", "Add a new target at the handle's position with current values");
 
-	mainTarget = new MorphTarget();
+	mainTarget = new MorphTarget("Main");
 	mainTarget->color->setColor(Colours::transparentBlack);
 	addChildControllableContainer(mainTarget);
 	mainTarget->showInspectorOnSelect = false;

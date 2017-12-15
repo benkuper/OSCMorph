@@ -54,6 +54,9 @@ void MorphTargetViewUI::paint(Graphics & g)
 	g.fillEllipse(getLocalBounds().withSizeKeepingCentre(getWidth()*item->weight->floatValue(), getHeight()*item->weight->floatValue()).toFloat());
 	g.setColour(item->color->getColor());
 	g.drawEllipse(getLocalBounds().reduced(1).toFloat(), 2);
+
+	g.setColour(item->color->getColor().brighter());
+	if(!item->isMain) g.drawText(item->niceName, getLocalBounds().reduced(2).toFloat(), Justification::centred);
 }
 
 void MorphTargetViewUI::resized()

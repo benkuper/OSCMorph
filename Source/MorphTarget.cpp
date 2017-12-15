@@ -13,6 +13,7 @@
 
 MorphTarget::MorphTarget(const String &name) :
 	BaseItem(name),
+	isMain(false),
 	values("Values")
 {
 	Random rnd;
@@ -31,13 +32,13 @@ MorphTarget::MorphTarget(const String &name) :
 
 	if (Morpher::getInstanceWithoutCreating() != nullptr)
 	{
-		DBG("Add listener to morpher values");
 		Morpher::getInstance()->values->addBaseManagerListener(this);
 		for (GenericControllableItem * i : Morpher::getInstance()->values->items) addValueFromItem(i);
 		
 		position->isEditable = false;
 	} else
 	{
+		isMain = true;
 		values.hideInEditor = true;
 	}
 

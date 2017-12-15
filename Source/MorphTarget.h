@@ -20,6 +20,7 @@ public:
 	MorphTarget(const String &name = "MorphTarget");
 	~MorphTarget();
 
+	bool isMain;
 	ColorParameter * color;
 	Point2DParameter * position;
 
