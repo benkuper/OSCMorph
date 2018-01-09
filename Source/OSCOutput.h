@@ -21,6 +21,9 @@ public:
 	~OSCOutput() {}
 
 	//SEND
+	BoolParameter * logIncoming;
+	BoolParameter * logOutgoing;
+
 	StringParameter * remoteHost;
 	IntParameter * remotePort;
 
@@ -33,6 +36,7 @@ public:
 
 	static OSCOutput * create() { return new OSCOutput(); }
 
+	void onContainerParameterChangedInternal(Parameter *) override;
 	
 	OSCReceiver receiver;
 	void setupReceiver();

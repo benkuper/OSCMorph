@@ -24,6 +24,8 @@ Morpher::Morpher() :
 	blendMode->addOption("Voronoi", Voronoi)->addOption("Weights", Weights)->addOption("Gradient Band", GradientBand);
 
 	bgImagePath = addStringParameter("Background Path", "", "");
+	bgImagePath->defaultUI = StringParameter::FILE;
+
 	bgScale = addFloatParameter("Background Scale", "", 10,1,100);
 	bgOpacity = addFloatParameter("Background Opacity", "", 1);
 	diagramOpacity = addFloatParameter("Diagram Opacity", "Opacity of the Voronoi Diagram", .2f, 0, 1);
@@ -37,6 +39,7 @@ Morpher::Morpher() :
 	mainTarget->color->setColor(Colours::transparentBlack);
 	addChildControllableContainer(mainTarget);
 	mainTarget->showInspectorOnSelect = false;
+	mainTarget->hideInEditor = true;
 
 	values = new GenericControllableManager("Values");
 	values->setCustomShortName("values");
@@ -344,7 +347,9 @@ bool Morpher::checkSitesAreNeighbours(jcv_site * s1, jcv_site * s2)
 
 void Morpher::setTargetPosition(float x, float y)
 {
+	DBG("Set taret position " << x << " / " << y);
 	mainTarget->position->setPoint(Point<float>(x, y)*bgScale->floatValue());
+	
 }
 
 

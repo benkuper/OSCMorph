@@ -14,6 +14,9 @@
 OSCOutput::OSCOutput(const String & name, int defaultRemotePort) :
 	BaseItem(name)
 {
+	logIncoming = addBoolParameter("Log Incoming", "Log incoming messages", false);
+	logOutgoing = addBoolParameter("Log Outgoing", "Log outgoing messages", false);
+
 	//Send
 	remoteHost = addStringParameter("Remote Host", "Remote Host to send to.", "127.0.0.1");
 	remotePort = addIntParameter("Remote port", "Port on which the remote host is listening to", defaultRemotePort, 1024, 65535);
@@ -39,17 +42,25 @@ void OSCOutput::setupSender()
 void OSCOutput::sendOSC(const OSCMessage & msg)
 {
 	if (!enabled->boolValue()) return;
-	/*
-	if (logOutgoingData->boolValue())
+	
+	if (logOutgoing->boolValue())
 	{
 		NLOG(niceName, "Send OSC : " << msg.getAddressPattern().toString());
 	}
-	*/
+	
 	sender.sendToIPAddress(remoteHost->stringValue(), remotePort->intValue(), msg);
 }
 
 
 
+
+void OSCOutput::onContainerParameterChangedInternal(Parameter * p)
+{
+	if (p == localPort)
+	{
+		setupReceiver();
+	} else if (p == remoteHost || p == remotePort) setupSender();
+}
 
 void OSCOutput::setupReceiver()
 {
@@ -77,7 +88,13 @@ void OSCOutput::processMessage(const OSCMessage & msg)
 	if (!enabled->boolValue()) return;
 
 	String address = msg.getAddressPattern().toString();
-	DBG("Receive : " << address << " with " << msg.size() << " args");
+	//DBG("Receive : " << address << " with " << msg.size() << " args");
+	
+	if (logIncoming->boolValue())
+	{
+		NLOG(niceName, "Receive OSC : " << msg.getAddressPattern().toString());
+	}
+
 	if (address == "/target/position" || address == "/3/xy") //default simple layout for touchosc
 	{
 		if (msg.size() >= 2)

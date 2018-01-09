@@ -42,6 +42,8 @@ MorphTarget::MorphTarget(const String &name) :
 		values.hideInEditor = true;
 	}
 
+	values.editorIsCollapsed = false;
+
 	syncValuesWithModel();
 	
 }

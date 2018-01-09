@@ -32,6 +32,7 @@ MorpherViewUI::MorpherViewUI(const String & contentName, Morpher * _manager) :
 
 	mainTargetUI->setViewZoom(viewZoom);
 	
+	setRepaintsOnMouseActivity(true);
 }
 
 MorpherViewUI::~MorpherViewUI()
@@ -97,7 +98,7 @@ void MorpherViewUI::paintBackground(Graphics & g)
 
 	// TEEEEEEEEEEEEEEEEEEEEEEEMP
 	
-	/*
+	
 	Point<float> mp = manager->mainTarget->position->getPoint();
 
 	int index = Morpher::getInstance()->getSiteIndexForPoint(mp);
@@ -220,7 +221,7 @@ void MorpherViewUI::paintBackground(Graphics & g)
 			}
 		}
 	}
-	*/
+	
 	
 }
 
@@ -252,6 +253,7 @@ void MorpherViewUI::weightsUpdated()
 	{
 		for (auto &mui : itemsUI) mui->repaint();
 	}
+	repaint();
 }
 
 void MorpherViewUI::mouseDown(const MouseEvent & e)
@@ -312,7 +314,7 @@ void MorpherViewUI::controllableFeedbackUpdateAsync(ControllableContainer * cc, 
 	else if (c == manager->diagramOpacity)		 repaint();
 	else if (c == manager->mainTarget->position)
 	{
-		//DBG("position changed : " << manager->mainTarget->position->getPoint().toString());
+		DBG("position changed : " << manager->mainTarget->position->getPoint().toString() << " : " << (int)mainTargetUI->isMouseOverOrDragging(true));
 		if (!mainTargetUI->isMouseOverOrDragging(true))
 		{
 
