@@ -435,3 +435,9 @@ void Morpher::loadJSONDataInternal(var data)
 	BaseManager::loadJSONDataInternal(data);
 }
 
+void Morpher::clear()
+{
+	BaseManager::clear();
+	values->clear();
+}
+

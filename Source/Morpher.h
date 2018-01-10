@@ -73,6 +73,8 @@ public:
 	var getJSONData() override;
 	void loadJSONDataInternal(var data) override;
 
+	void clear() override;
+
 	class MorpherListener
 	{
 	public:
