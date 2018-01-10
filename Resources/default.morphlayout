@@ -1,0 +1,79 @@
+{
+  "mainLayout": {
+    "type": 1,
+    "width": 1445,
+    "height": 785,
+    "direction": 2,
+    "shifters": [
+      {
+        "type": 1,
+        "width": 1445,
+        "height": 785,
+        "direction": 1,
+        "shifters": [
+          {
+            "type": 0,
+            "width": 975,
+            "height": 999,
+            "currentContent": "Morpher",
+            "tabs": [
+              {
+                "name": "Morpher"
+              }
+            ]
+          },
+          {
+            "type": 1,
+            "width": 465,
+            "height": 496,
+            "direction": 2,
+            "shifters": [
+              {
+                "type": 0,
+                "width": 957,
+                "height": 484,
+                "currentContent": "Inspector",
+                "tabs": [
+                  {
+                    "name": "Inspector"
+                  }
+                ]
+              },
+              {
+                "type": 1,
+                "width": 959,
+                "height": 294,
+                "direction": 1,
+                "shifters": [
+                  {
+                    "type": 0,
+                    "width": 229,
+                    "height": 496,
+                    "currentContent": "OSC Outputs",
+                    "tabs": [
+                      {
+                        "name": "OSC Outputs"
+                      }
+                    ]
+                  },
+                  {
+                    "type": 0,
+                    "width": 229,
+                    "height": 502,
+                    "currentContent": "Logger",
+                    "tabs": [
+                      {
+                        "name": "Logger"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "windows": null
+}

@@ -29,6 +29,9 @@ public:
 
 	IntParameter * localPort;
 
+	BoolParameter * sendWeights;
+	BoolParameter * sendValues;
+
 	OSCSender sender;
 	void setupSender();
 

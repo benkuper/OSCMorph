@@ -26,7 +26,9 @@ public:
 	BoolParameter * autoSlipComplexParams;
 	BoolParameter * sendColorNativeOSC;
 
-	void sendMessage(const OSCMessage &m);
+	void sendWeightMessage(const OSCMessage &m);
+	void sendValueMessage(const OSCMessage &m);
+
 	OSCArgument varToArgument(const var & v);
 
 	void weightsUpdated() override;

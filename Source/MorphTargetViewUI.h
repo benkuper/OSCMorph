@@ -20,10 +20,13 @@ public:
 	MorphTargetViewUI(MorphTarget * mt);
 	~MorphTargetViewUI();
 
+	Image targetImage;
+	bool isMain;
+
 	ScopedPointer<BoolToggleUI> activeUI;
 	
 	void setHandleColor(Colour c);
-	
+
 	void paint(Graphics &g) override;
 	void resized() override;
 

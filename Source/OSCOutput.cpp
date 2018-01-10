@@ -26,6 +26,9 @@ OSCOutput::OSCOutput(const String & name, int defaultRemotePort) :
 	localPort->hideInOutliner = true;
 	localPort->isTargettable = false;
 
+	sendWeights = addBoolParameter("Send Weights", "Send weights of each MorphTarget", false);
+	sendValues = addBoolParameter("Send Values", "Send computed values of the Morpher", true);
+
 	receiver.addListener(this);
 
 	setupSender();
@@ -52,14 +55,10 @@ void OSCOutput::sendOSC(const OSCMessage & msg)
 }
 
 
-
-
 void OSCOutput::onContainerParameterChangedInternal(Parameter * p)
 {
-	if (p == localPort)
-	{
-		setupReceiver();
-	} else if (p == remoteHost || p == remotePort) setupSender();
+	if (p == localPort) setupReceiver();
+	else if (p == remoteHost || p == remotePort) setupSender();
 }
 
 void OSCOutput::setupReceiver()

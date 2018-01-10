@@ -29,9 +29,14 @@ OSCOutputManager::~OSCOutputManager()
 	if (Morpher::getInstanceWithoutCreating() != nullptr) Morpher::getInstance()->removeMorpherListener(this);
 }
 
-void OSCOutputManager::sendMessage(const OSCMessage & m)
+void OSCOutputManager::sendWeightMessage(const OSCMessage & m)
 {
-	for (auto &o : items) o->sendOSC(m);
+	for (auto &o : items) if(o->sendWeights->boolValue()) o->sendOSC(m);
+}
+
+void OSCOutputManager::sendValueMessage(const OSCMessage & m)
+{
+	for (auto &o : items) if(o->sendValues->boolValue()) o->sendOSC(m);
 }
 
 
@@ -49,9 +54,18 @@ OSCArgument OSCOutputManager::varToArgument(const var & v)
 
 void OSCOutputManager::weightsUpdated()
 {
+	for (auto &i : Morpher::getInstance()->items)
+	{
+		OSCMessage m("/weight/" + i->shortName);
+		m.addFloat32(i->weight->floatValue());
+		sendWeightMessage(m);
+	}
+
 	for (auto &i : Morpher::getInstance()->values->items)
 	{
 		if (i->controllable->type == Controllable::TRIGGER) continue;
+		if (!i->enabled->boolValue()) continue;
+
 		Parameter * p = (Parameter *)(i->controllable);
 		String targetAddress = i->niceName;
 		if (!targetAddress.startsWithChar('/')) targetAddress = "/" + targetAddress;
@@ -63,7 +77,7 @@ void OSCOutputManager::weightsUpdated()
 			Colour c = ((ColorParameter *)p)->getColor();
 			uint32 uc = c.getRed() << 24 | c.getGreen() << 16 | c.getBlue() << 8 | c.getAlpha();
 			m.addArgument(OSCArgument(uc));
-			sendMessage(m);
+			sendValueMessage(m);
 
 		}else if (p->isComplex())
 		{
@@ -72,7 +86,7 @@ void OSCOutputManager::weightsUpdated()
 			{
 				OSCMessage m(targetAddress);
 				for (int v = 0; v < p->value.size(); v++) m.addArgument(varToArgument(p->value[v]));
-				sendMessage(m);
+				sendValueMessage(m);
 			} else
 			{
 				StringArray addSplit;
@@ -87,7 +101,7 @@ void OSCOutputManager::weightsUpdated()
 					//DBG("Split address (" << v << ") " << splitAddress);
 					OSCMessage m(splitAddress);
 					m.addArgument(varToArgument(p->value[v]));
-					sendMessage(m);
+					sendValueMessage(m);
 				}
 			}
 		}
@@ -95,7 +109,7 @@ void OSCOutputManager::weightsUpdated()
 		{
 			OSCMessage m(targetAddress);
 			m.addArgument(varToArgument(p->value));
-			sendMessage(m);
+			sendValueMessage(m);
 		}
 	}
 }

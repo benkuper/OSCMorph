@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="q57Bzf" name="OSCMorph" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="guiapp" version="1.0.0"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.1"
               bundleIdentifier="com.benkuper.OSCMorph" includeBinaryInAppConfig="1"
               cppLanguageStandard="11" companyCopyright="" jucerVersion="5.2.0">
   <MAINGROUP id="bvpmYj" name="OSCMorph">
     <GROUP id="{1D9EF9ED-D94B-FC6F-91C5-3462E4157284}" name="Resources">
+      <FILE id="oQAlDZ" name="default.morphlayout" compile="0" resource="1"
+            file="Resources/default.morphlayout"/>
       <FILE id="eA4Ao1" name="icon.png" compile="0" resource="1" file="Resources/icon.png"/>
+      <FILE id="EzZELM" name="target.png" compile="0" resource="1" file="Resources/target.png"/>
     </GROUP>
     <GROUP id="{358A6182-B931-C1D7-C8D3-DEE1052C7A57}" name="Source">
       <GROUP id="{03E5973D-1F39-0708-1281-0FFBD86ACC4F}" name="Morpher">

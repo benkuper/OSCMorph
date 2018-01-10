@@ -17,7 +17,7 @@ MainContentComponent::MainContentComponent()
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("Morpher", &MorpherViewUI::create));
 	ShapeShifterFactory::getInstance()->defs.add(new ShapeShifterDefinition("OSC Outputs", &OSCOutputManagerUI::create));
 
-	//ShapeShifterManager::getInstance()->setDefaultFileData(BinaryData::default_chalayout);
+	ShapeShifterManager::getInstance()->setDefaultFileData(BinaryData::default_morphlayout);
 	ShapeShifterManager::getInstance()->setLayoutInformations("morphlayout", "OSCMorph/layouts");
 	ShapeShifterManager::getInstance()->loadLastSessionLayoutFile();
 

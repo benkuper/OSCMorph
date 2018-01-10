@@ -67,6 +67,7 @@
 		39E883B6BDE641C98508AFEA = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCOutputManager.h; path = ../../Source/OSCOutputManager.h; sourceTree = "SOURCE_ROOT"; };
 		3A82FF778AADAC665765B754 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_events.mm"; path = "../../JuceLibraryCode/include_juce_events.mm"; sourceTree = "SOURCE_ROOT"; };
 		3BE569FBA92BA0002E5FB2BF = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		3C7011AA2075AFA4091C4FF1 = {isa = PBXFileReference; lastKnownFileType = image.png; name = target.png; path = ../../Resources/target.png; sourceTree = "SOURCE_ROOT"; };
 		422818E0B50A996110B3E859 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_video.mm"; path = "../../JuceLibraryCode/include_juce_video.mm"; sourceTree = "SOURCE_ROOT"; };
 		44BB9AC67B7AF7EB9D3D899F = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PresetGroup.cpp; path = ../../Source/PresetGroup.cpp; sourceTree = "SOURCE_ROOT"; };
 		456448679E07F7AD9C6952C0 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "jc_voronoi.h"; path = "../../Source/jc_voronoi.h"; sourceTree = "SOURCE_ROOT"; };
@@ -114,6 +115,7 @@
 		CC357E57B4BCCA5A955C70F6 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OSCOutputManager.cpp; path = ../../Source/OSCOutputManager.cpp; sourceTree = "SOURCE_ROOT"; };
 		CD71A2A288A96BBD8AF8CBD3 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OSCOutputManagerUI.h; path = ../../Source/OSCOutputManagerUI.h; sourceTree = "SOURCE_ROOT"; };
 		CF95F1493037E56B6782FF73 = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JuceHeader.h; path = ../../JuceLibraryCode/JuceHeader.h; sourceTree = "SOURCE_ROOT"; };
+		D05D656397CA5B0A5BD4852E = {isa = PBXFileReference; lastKnownFileType = file.morphlayout; name = default.morphlayout; path = ../../Resources/default.morphlayout; sourceTree = "SOURCE_ROOT"; };
 		E02FD41D60A6C23683368484 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_video"; path = "~/JUCE/modules/juce_video"; sourceTree = "<absolute>"; };
 		E7B4632B2F870702D99950B1 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "include_juce_opengl.mm"; path = "../../JuceLibraryCode/include_juce_opengl.mm"; sourceTree = "SOURCE_ROOT"; };
 		E8D7BC7A90721DA8BA98AFA0 = {isa = PBXFileReference; lastKnownFileType = file; name = "juce_audio_devices"; path = "~/JUCE/modules/juce_audio_devices"; sourceTree = "<absolute>"; };
@@ -126,7 +128,9 @@
 		FF159562DE05C6283CA79B07 = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		FFDA8F2F75271FC04AB44379 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MainComponentCommands.cpp; path = ../../Source/MainComponentCommands.cpp; sourceTree = "SOURCE_ROOT"; };
 		A78A93D2FC407CA06A4E657D = {isa = PBXGroup; children = (
-					230119EC28236144829C8D5B, ); name = Resources; sourceTree = "<group>"; };
+					D05D656397CA5B0A5BD4852E,
+					230119EC28236144829C8D5B,
+					3C7011AA2075AFA4091C4FF1, ); name = Resources; sourceTree = "<group>"; };
 		909ACD4D795B01EEA9473932 = {isa = PBXGroup; children = (
 					34A3CC4CB8F9688D6EDE7D2B,
 					62A5D3676C71DFE20DE0AAB6,
@@ -237,8 +241,8 @@
 					"_DEBUG=1",
 					"DEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=1.0.0",
-					"JUCE_APP_VERSION_HEX=0x10000",
+					"JUCE_APP_VERSION=1.0.1",
+					"JUCE_APP_VERSION_HEX=0x10001",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=0",
@@ -268,8 +272,8 @@
 					"_NDEBUG=1",
 					"NDEBUG=1",
 					"JUCER_XCODE_MAC_F6D2F4CF=1",
-					"JUCE_APP_VERSION=1.0.0",
-					"JUCE_APP_VERSION_HEX=0x10000",
+					"JUCE_APP_VERSION=1.0.1",
+					"JUCE_APP_VERSION_HEX=0x10001",
 					"JucePlugin_Build_VST=0",
 					"JucePlugin_Build_VST3=0",
 					"JucePlugin_Build_AU=0",

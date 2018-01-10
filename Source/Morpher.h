@@ -31,6 +31,7 @@ public:
 	FloatParameter * bgScale;
 	FloatParameter * diagramOpacity;
 	FloatParameter * targetSize;
+	BoolParameter * showDebug;
 
 	ScopedPointer<MorphTarget> mainTarget;
 

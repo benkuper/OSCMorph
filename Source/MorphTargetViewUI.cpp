@@ -15,7 +15,7 @@ MorphTargetViewUI::MorphTargetViewUI(MorphTarget * mt) :
 	BaseItemUI<MorphTarget>(mt, ResizeMode::ALL, true)
 {
 	autoDrawHighlightWhenSelected = false;
-	
+		
 	margin = 0;
 	headerHeight = 15;
 	
@@ -34,6 +34,8 @@ MorphTargetViewUI::MorphTargetViewUI(MorphTarget * mt) :
 	//removeChildComponent(enabledBT);
 	removeChildComponent(nameUI);
 
+	isMain = mt == Morpher::getInstance()->mainTarget;
+	if(isMain) targetImage = ImageCache::getFromMemory(BinaryData::target_png, BinaryData::target_pngSize);
 
 	resized();
 }
@@ -49,11 +51,17 @@ void MorphTargetViewUI::setHandleColor(Colour c)
 
 void MorphTargetViewUI::paint(Graphics & g)
 {
-
-	g.setColour(item->color->getColor().brighter().withAlpha(.6f));
-	g.fillEllipse(getLocalBounds().withSizeKeepingCentre(getWidth()*item->weight->floatValue(), getHeight()*item->weight->floatValue()).toFloat());
-	g.setColour(item->color->getColor());
-	g.drawEllipse(getLocalBounds().reduced(1).toFloat(), 2);
+	if (!isMain)
+	{
+		g.setColour(item->color->getColor().brighter().withAlpha(.6f));
+		g.fillEllipse(getLocalBounds().withSizeKeepingCentre(getWidth()*item->weight->floatValue(), getHeight()*item->weight->floatValue()).toFloat());
+		g.setColour(item->color->getColor());
+		g.drawEllipse(getLocalBounds().reduced(1).toFloat(), 2);
+	} else
+	{
+		g.drawImage(targetImage, getLocalBounds().toFloat());
+	}
+	
 
 	g.setColour(item->color->getColor().brighter());
 	if(!item->isMain) g.drawText(item->niceName, getLocalBounds().reduced(2).toFloat(), Justification::centred);

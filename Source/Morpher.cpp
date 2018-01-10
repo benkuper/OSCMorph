@@ -35,6 +35,8 @@ Morpher::Morpher() :
 
 	addTargetAtCurrentPosition = addTrigger("Add Target at Position", "Add a new target at the handle's position with current values");
 
+	showDebug = addBoolParameter("Show Debug", "Draw debug information on voronoi weights", false);
+
 	mainTarget = new MorphTarget("Main");
 	mainTarget->color->setColor(Colours::transparentBlack);
 	addChildControllableContainer(mainTarget);
@@ -269,6 +271,8 @@ void Morpher::computeWeights()
 	
 	for (GenericControllableItem * i : values->items)
 	{
+		if (!i->enabled->boolValue()) continue;
+
 		switch (i->controllable->type)
 		{
 		case Controllable::FLOAT:
@@ -347,9 +351,7 @@ bool Morpher::checkSitesAreNeighbours(jcv_site * s1, jcv_site * s2)
 
 void Morpher::setTargetPosition(float x, float y)
 {
-	DBG("Set taret position " << x << " / " << y);
 	mainTarget->position->setPoint(Point<float>(x, y)*bgScale->floatValue());
-	
 }
 
 
@@ -369,8 +371,9 @@ void Morpher::onContainerParameterChanged(Parameter * p)
 	if (p == blendMode)
 	{
 		BlendMode bm = blendMode->getValueDataAsEnum<BlendMode>();
-		diagramOpacity->hideInEditor = bm != Voronoi;
-		
+		diagramOpacity->setEnabled(bm == Voronoi);
+		showDebug->setEnabled(bm == Voronoi);
+
 		switch (bm)
 		{
 		case Voronoi:
