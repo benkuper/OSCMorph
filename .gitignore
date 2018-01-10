@@ -64,3 +64,5 @@ profile
 extras/Projucer/JUCECompileEngine.dylib
 
 Builds/VisualStudio2017/
+
+Builds/MacOSX/

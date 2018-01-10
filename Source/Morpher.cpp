@@ -431,14 +431,13 @@ var Morpher::getJSONData()
 
 void Morpher::loadJSONDataInternal(var data)
 {
-	BaseManager::loadJSONDataInternal(data);
+	values->clear();
 	values->loadJSONData(data.getProperty("values", var()));
+	BaseManager::loadJSONDataInternal(data);
 }
 
 void Morpher::clear()
 {
 	BaseManager::clear();
-	values->clear();
-
 }
 
