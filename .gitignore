@@ -66,3 +66,5 @@ extras/Projucer/JUCECompileEngine.dylib
 Builds/VisualStudio2017/
 
 Builds/MacOSX/
+JuceLibraryCode/BinaryData.cpp
+JuceLibraryCode/BinaryData.h
