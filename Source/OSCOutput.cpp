@@ -18,19 +18,15 @@ OSCOutput::OSCOutput(const String & name, int defaultRemotePort) :
 	logOutgoing = addBoolParameter("Log Outgoing", "Log outgoing messages", false);
 
 	//Send
+	localPort = addIntParameter("Local Port", "Local Port to bind to receive OSC Messages", 11450, 1024, 65535);
 	remoteHost = addStringParameter("Remote Host", "Remote Host to send to.", "127.0.0.1");
 	remotePort = addIntParameter("Remote port", "Port on which the remote host is listening to", defaultRemotePort, 1024, 65535);
 
-	setupSender();
-	localPort = addIntParameter("Local Port", "Local Port to bind to receive OSC Messages", 11450, 1024, 65535);
-	localPort->hideInOutliner = true;
-	localPort->isTargettable = false;
-
-	sendWeights = addBoolParameter("Send Weights", "Send weights of each MorphTarget", false);
 	sendValues = addBoolParameter("Send Values", "Send computed values of the Morpher", true);
+	sendWeights = addBoolParameter("Send Weights", "Send weights of each MorphTarget", false);
+	sendTarget = addBoolParameter("Send Target Position", "Send target position", false);
 
 	receiver.addListener(this);
-
 	setupSender();
 	setupReceiver();
 }

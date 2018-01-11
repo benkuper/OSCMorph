@@ -28,6 +28,7 @@ public:
 
 	void sendWeightMessage(const OSCMessage &m);
 	void sendValueMessage(const OSCMessage &m);
+	void sendTargetMessage(const OSCMessage &m);
 
 	OSCArgument varToArgument(const var & v);
 

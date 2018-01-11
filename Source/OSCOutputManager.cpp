@@ -39,6 +39,11 @@ void OSCOutputManager::sendValueMessage(const OSCMessage & m)
 	for (auto &o : items) if(o->sendValues->boolValue()) o->sendOSC(m);
 }
 
+void OSCOutputManager::sendTargetMessage(const OSCMessage & m)
+{
+	for (auto &o : items) if (o->sendTarget->boolValue()) o->sendOSC(m);
+}
+
 
 OSCArgument OSCOutputManager::varToArgument(const var & v)
 {
@@ -54,6 +59,11 @@ OSCArgument OSCOutputManager::varToArgument(const var & v)
 
 void OSCOutputManager::weightsUpdated()
 {
+	OSCMessage tm("/target/position");
+	tm.addFloat32(Morpher::getInstance()->mainTarget->position->x);
+	tm.addFloat32(Morpher::getInstance()->mainTarget->position->y);
+	sendTargetMessage(tm);
+
 	for (auto &i : Morpher::getInstance()->items)
 	{
 		OSCMessage m("/weight/" + i->shortName);

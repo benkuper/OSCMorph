@@ -31,6 +31,7 @@ public:
 
 	BoolParameter * sendWeights;
 	BoolParameter * sendValues;
+	BoolParameter * sendTarget;
 
 	OSCSender sender;
 	void setupSender();

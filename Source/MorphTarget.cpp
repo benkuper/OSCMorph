@@ -76,7 +76,6 @@ void MorphTarget::syncValuesWithModel(bool syncValues)
 		Parameter * p = dynamic_cast<Parameter *>(gci->controllable);
 		vList[index]->setRange(p->minimumValue, p->maximumValue);
 		if (syncValues) vList[index]->setValue(p->value);
-		DBG(niceName << ":" << p->niceName << " / " << p->value.toString());
 		index++;
 	}
 }
@@ -92,7 +91,6 @@ void MorphTarget::loadJSONDataInternal(var data)
 {
 	BaseItem::loadJSONDataInternal(data); 
 	values.loadJSONData(data.getProperty("values",var()), true);
-	DBG("Load JSON " << niceName);
 
 }
 
@@ -100,16 +98,12 @@ void MorphTarget::controllableFeedbackUpdate(ControllableContainer * cc, Control
 {
 	if (cc == &values)
 	{
-		Parameter * p = dynamic_cast<Parameter *>(c);
-		if (c != nullptr) DBG(niceName << "controllableFeedbackUpdate here " << p->niceName << ":" << p->value.toString());
-
 		Morpher::getInstance()->computeWeights();
 	}
 }
 
 void MorphTarget::itemAdded(GenericControllableItem * item)
 {
-	DBG("Add item there " << niceName << " / " << item->niceName);
 	addValueFromItem(item);
 	syncValuesWithModel();
 }
