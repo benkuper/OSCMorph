@@ -32,6 +32,7 @@ MorpherViewUI::MorpherViewUI(const String & contentName, Morpher * _manager) :
 
 	mainTargetUI->setViewZoom(viewZoom);
 	
+	setInterceptsMouseClicks(true, true);
 	setRepaintsOnMouseActivity(true);
 }
 
@@ -83,7 +84,7 @@ void MorpherViewUI::paintBackground(Graphics & g)
 			}
 			p.closeSubPath();
 			g.fillPath(p);
-		}
+			}
         }
         default:
             break;
@@ -97,132 +98,147 @@ void MorpherViewUI::paintBackground(Graphics & g)
 	Rectangle<float> r = getBoundsInView(Rectangle<float>(-tw / 2, -th / 2, tw, th));
 	g.drawImage(bgImage, r);
 
-	if(bm == Morpher::Voronoi && Morpher::getInstance()->showDebug->boolValue())
+
+	if(bm == Morpher::Voronoi)
 	{
-		Point<float> mp = manager->mainTarget->position->getPoint();
-
-		int index = Morpher::getInstance()->getSiteIndexForPoint(mp);
-
-		if (index >= 0)
+		if (Morpher::getInstance()->showDebug->boolValue())
 		{
-			const jcv_site * sites = jcv_diagram_get_sites(manager->diagram);
-			jcv_site s = sites[index];
+			Point<float> mp = manager->mainTarget->position->getPoint();
 
-			//curZoneIndex->setValue(getSiteIndexForPoint(mp));
+			int index = Morpher::getInstance()->getSiteIndexForPoint(mp);
 
-			//Compute direct site
-			//MorphTarget * mt = manager->getEnabledTargetAtIndex(s.index);
-			//float d = mp.getDistanceFrom(Point<float>(s.p.x, s.p.y));
-
-			Point<float> mpVPos = getPosInView(mp);
-
-
-			jcv_graphedge * edge = s.edges;
-			Array<jcv_graphedge *> edges;
-
-			Array<float> edgeDists;
-			Array<float> edgeNeighbourDists;
-			Array<jcv_site *> neighbourSites;
-			Array<Line<float>> edgeLines;
-			Array<Point<float>> neighboursViewPoints;
-			Array<Point<float>> edgeViewPoints;
-
-			g.setColour(Colours::white.withAlpha(.1f));
-
-			Point<float> sVPos = getPosInView(Point<float>(s.p.x, s.p.y));
-			g.drawLine(mpVPos.x, mpVPos.y, sVPos.x, sVPos.y);
-
-			g.setColour(Colours::white.withAlpha(.6f));
-
-			while (edge != nullptr)
+			if (index >= 0)
 			{
-				jcv_site * ns = edge->neighbor;// e->sites[0]->index == s.index ? e->sites[1] : e->sites[0];
+				const jcv_site * sites = jcv_diagram_get_sites(manager->diagram);
+				jcv_site s = sites[index];
 
-				if (ns == nullptr)
+				//curZoneIndex->setValue(getSiteIndexForPoint(mp));
+
+				//Compute direct site
+				//MorphTarget * mt = manager->getEnabledTargetAtIndex(s.index);
+				//float d = mp.getDistanceFrom(Point<float>(s.p.x, s.p.y));
+
+				Point<float> mpVPos = getPosInView(mp);
+
+
+				jcv_graphedge * edge = s.edges;
+				Array<jcv_graphedge *> edges;
+
+				Array<float> edgeDists;
+				Array<float> edgeNeighbourDists;
+				Array<jcv_site *> neighbourSites;
+				Array<Line<float>> edgeLines;
+				Array<Point<float>> neighboursViewPoints;
+				Array<Point<float>> edgeViewPoints;
+
+				g.setColour(Colours::white.withAlpha(.1f));
+
+				Point<float> sVPos = getPosInView(Point<float>(s.p.x, s.p.y));
+				g.drawLine(mpVPos.x, mpVPos.y, sVPos.x, sVPos.y);
+
+				g.setColour(Colours::white.withAlpha(.6f));
+
+				while (edge != nullptr)
 				{
-					edge = edge->next;
-					continue;
-				}
+					jcv_site * ns = edge->neighbor;// e->sites[0]->index == s.index ? e->sites[1] : e->sites[0];
 
-				//DBG("Site " << s.index << " : Edge has sites " << e->sites[0]->index << "and " << e->sites[1]->index << ", chosen " << ns->index);
-				//DBG("\t\t" << edge->pos[0].x << " / " << edge->pos[0].y << " / " << edge->pos[1].x << " / " << edge->pos[1].y);
-
-				Line<float> line(Point<float>(edge->pos[0].x, edge->pos[0].y), Point<float>(edge->pos[1].x, edge->pos[1].y));
-				Point<float> np;
-				float distToEdge = line.getDistanceFromPoint(mp, np);
-				Point<float> sp;
-				float distNeighbourToEdgePoint = np.getDistanceFrom(Point<float>(ns->p.x, ns->p.y));
-
-				edges.add(edge);
-
-				edgeDists.add(distToEdge);
-				edgeNeighbourDists.add(distNeighbourToEdgePoint);
-				neighbourSites.add(ns);
-				edgeLines.add(line);
-
-				edge = edge->next;
-
-				Point<float> nsVPos = getPosInView(Point<float>(ns->p.x, ns->p.y));
-				neighboursViewPoints.add(nsVPos);
-				Point<float> npVPos = getPosInView(np);
-				edgeViewPoints.add(npVPos);
-
-				g.drawLine(mpVPos.x, mpVPos.y, nsVPos.x, nsVPos.y);
-			}
-
-			//DBG("Num edges to test " << edges.size());
-
-			//Compute weight for each neighbour
-
-			g.setColour(Colours::white.withAlpha(.6f));
-
-
-			for (int i = 0; i<edges.size(); i++)
-			{
-				//float edgeDist = edgeDists[i];
-				//float edgeNDist = edgeNeighbourDists[i];
-				//float totalDist = edgeDist + edgeNDist;
-
-
-				float minOtherEdgeDist = (float)INT_MAX;
-				jcv_graphedge * minEdge = nullptr;
-				int minEdgeIndex = -1;
-
-				for (int j = 0; j < edges.size(); j++)
-				{
-					if (i == j) continue;
-
-					if (Morpher::getInstance()->checkSitesAreNeighbours(edges[i]->neighbor, edges[j]->neighbor)) continue;
-
-					float ed = edgeDists[j];
-					if (ed < minOtherEdgeDist)
+					if (ns == nullptr)
 					{
-						minOtherEdgeDist = ed;
-						minEdge = edges[j];
-						minEdgeIndex = j;
+						edge = edge->next;
+						continue;
 					}
+
+					//DBG("Site " << s.index << " : Edge has sites " << e->sites[0]->index << "and " << e->sites[1]->index << ", chosen " << ns->index);
+					//DBG("\t\t" << edge->pos[0].x << " / " << edge->pos[0].y << " / " << edge->pos[1].x << " / " << edge->pos[1].y);
+
+					Line<float> line(Point<float>(edge->pos[0].x, edge->pos[0].y), Point<float>(edge->pos[1].x, edge->pos[1].y));
+					Point<float> np;
+					float distToEdge = line.getDistanceFromPoint(mp, np);
+					Point<float> sp;
+					float distNeighbourToEdgePoint = np.getDistanceFrom(Point<float>(ns->p.x, ns->p.y));
+
+					edges.add(edge);
+
+					edgeDists.add(distToEdge);
+					edgeNeighbourDists.add(distNeighbourToEdgePoint);
+					neighbourSites.add(ns);
+					edgeLines.add(line);
+
+					edge = edge->next;
+
+					Point<float> nsVPos = getPosInView(Point<float>(ns->p.x, ns->p.y));
+					neighboursViewPoints.add(nsVPos);
+					Point<float> npVPos = getPosInView(np);
+					edgeViewPoints.add(npVPos);
+
+					g.drawLine(mpVPos.x, mpVPos.y, nsVPos.x, nsVPos.y);
 				}
 
-				if (minEdge != nullptr)
-				{ 
-					//float ratio = 1 - (edgeDist / (edgeDist + minOtherEdgeDist));
-					g.setColour(Colours::orange);
-					g.drawLine(mpVPos.x, mpVPos.y, edgeViewPoints[minEdgeIndex].x, edgeViewPoints[minEdgeIndex].y);
-					g.setColour(Colours::yellow);
-					g.drawLine(mpVPos.x, mpVPos.y, edgeViewPoints[i].x, edgeViewPoints[i].y);
-					g.setColour(Colours::red);
-					g.drawLine(edgeViewPoints[i].x, edgeViewPoints[i].y, neighboursViewPoints[i].x, neighboursViewPoints[i].y);
-				} else
+				//DBG("Num edges to test " << edges.size());
+
+				//Compute weight for each neighbour
+
+				g.setColour(Colours::white.withAlpha(.6f));
+
+
+				for (int i = 0; i < edges.size(); i++)
 				{
-					//float directDist = mp.getDistanceFrom(Point<float>(neighbourSites[i]->p.x, neighbourSites[i]->p.y)); //if we want to check direct distance instead of path to point
-																														 //w = 1.0f / directDist;
-					g.setColour(Colours::purple);
-					g.drawLine(mpVPos.x, mpVPos.y, neighboursViewPoints[i].x, neighboursViewPoints[i].y);
+					//float edgeDist = edgeDists[i];
+					//float edgeNDist = edgeNeighbourDists[i];
+					//float totalDist = edgeDist + edgeNDist;
+
+
+					float minOtherEdgeDist = (float)INT_MAX;
+					jcv_graphedge * minEdge = nullptr;
+					int minEdgeIndex = -1;
+
+					for (int j = 0; j < edges.size(); j++)
+					{
+						if (i == j) continue;
+
+						if (Morpher::getInstance()->checkSitesAreNeighbours(edges[i]->neighbor, edges[j]->neighbor)) continue;
+
+						float ed = edgeDists[j];
+						if (ed < minOtherEdgeDist)
+						{
+							minOtherEdgeDist = ed;
+							minEdge = edges[j];
+							minEdgeIndex = j;
+						}
+					}
+
+					if (minEdge != nullptr)
+					{
+						//float ratio = 1 - (edgeDist / (edgeDist + minOtherEdgeDist));
+						g.setColour(Colours::orange);
+						g.drawLine(mpVPos.x, mpVPos.y, edgeViewPoints[minEdgeIndex].x, edgeViewPoints[minEdgeIndex].y);
+						g.setColour(Colours::yellow);
+						g.drawLine(mpVPos.x, mpVPos.y, edgeViewPoints[i].x, edgeViewPoints[i].y);
+						g.setColour(Colours::red);
+						g.drawLine(edgeViewPoints[i].x, edgeViewPoints[i].y, neighboursViewPoints[i].x, neighboursViewPoints[i].y);
+					} else
+					{
+						//float directDist = mp.getDistanceFrom(Point<float>(neighbourSites[i]->p.x, neighbourSites[i]->p.y)); //if we want to check direct distance instead of path to point
+																															 //w = 1.0f / directDist;
+						g.setColour(Colours::purple);
+						g.drawLine(mpVPos.x, mpVPos.y, neighboursViewPoints[i].x, neighboursViewPoints[i].y);
+					}
 				}
 			}
 		}
+
+		if (Morpher::getInstance()->useAttraction->boolValue())
+		{
+			Point<float> mtp = Morpher::getInstance()->mainTarget->position->getPoint();
+			Point<float> mp = getPosInView(mtp);
+			Point<float> tp = getPosInView(mtp + Morpher::getInstance()->attractionDir);
+			g.setColour(Colours::yellow);
+			g.drawLine(mp.x, mp.y, tp.x, tp.y);
+			g.fillEllipse(tp.x-5, tp.y-5, 10, 10);
+		}
 	}
 		
+	
 	
 }
 

@@ -17,7 +17,8 @@
 #include "jc_voronoi.h"
 
 class Morpher :
-	public BaseManager<MorphTarget>
+	public BaseManager<MorphTarget>,
+	public Timer
 {
 public:
 	juce_DeclareSingleton(Morpher,true);
@@ -32,6 +33,13 @@ public:
 	FloatParameter * diagramOpacity;
 	FloatParameter * targetSize;
 	BoolParameter * showDebug;
+	BoolParameter * useAttraction;
+	FloatParameter * attractionSpeed;
+
+	Point<float> attractionDir;
+
+	enum AttractionMode { SIMPLE, PHYSICS };
+	EnumParameter * attractionMode;
 
 	ScopedPointer<MorphTarget> mainTarget;
 
@@ -88,6 +96,9 @@ public:
 	void removeMorpherListener(MorpherListener* listener) { morpherListeners.remove(listener); }
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Morpher)	
+
+		// Inherited via Timer
+		virtual void timerCallback() override;
 };
 
 #endif

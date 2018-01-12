@@ -30,6 +30,8 @@ MorphTarget::MorphTarget(const String &name) :
 	weight = addFloatParameter("Weight", "Current weight of this target", 0, 0, 1);
 	addChildControllableContainer(&values);
 
+	attraction = addFloatParameter("Attraction", "Attraction of this target", 0, 0, 1);
+
 	if (Morpher::getInstanceWithoutCreating() != nullptr)
 	{
 		Morpher::getInstance()->values->addBaseManagerListener(this);

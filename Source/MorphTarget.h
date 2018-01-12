@@ -25,6 +25,7 @@ public:
 	Point2DParameter * position;
 
 	FloatParameter * weight;
+	FloatParameter * attraction;
 
 	ControllableContainer values;
 

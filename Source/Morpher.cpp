@@ -21,7 +21,7 @@ Morpher::Morpher() :
 	diagram = new jcv_diagram();
 	
 	blendMode = addEnumParameter("BlendMode", "Mode for value blending");
-	blendMode->addOption("Voronoi", Voronoi)->addOption("Weights", Weights)->addOption("Gradient Band", GradientBand);
+	blendMode->addOption("Voronoi", Voronoi)->addOption("Weights", Weights);// ->addOption("Gradient Band", GradientBand);
 
 	bgImagePath = addStringParameter("Background Path", "", "");
 	bgImagePath->defaultUI = StringParameter::FILE;
@@ -34,6 +34,12 @@ Morpher::Morpher() :
 	//curZoneIndex = addIntParameter("Current Site", "",-1,-1,20);
 
 	addTargetAtCurrentPosition = addTrigger("Add Target at Position", "Add a new target at the handle's position with current values");
+
+
+	useAttraction = addBoolParameter("Use Attraction", "When enabled, you can add attraction factors to targets and the MainTarget will move automatically", false);
+	attractionSpeed = addFloatParameter("Attraction speed", "Speed of the attraction. Effects depends on attraction mode", 1, .1f, 20, false);
+	attractionMode = addEnumParameter("Attraction Mode", "Mode for attraction", false);
+	attractionMode->addOption("Simple", SIMPLE)->addOption("Physics", PHYSICS);
 
 	showDebug = addBoolParameter("Show Debug", "Draw debug information on voronoi weights", false);
 
@@ -375,7 +381,7 @@ void Morpher::onContainerParameterChanged(Parameter * p)
 		showDebug->setEnabled(bm == Voronoi);
 
 		switch (bm)
-		{
+		{ 
 		case Voronoi:
 
 			break;
@@ -385,6 +391,12 @@ void Morpher::onContainerParameterChanged(Parameter * p)
 
 			break;
 		}
+	} else if (p == useAttraction)
+	{
+		attractionSpeed->setEnabled(useAttraction->boolValue());
+		attractionMode->setEnabled(useAttraction->boolValue());
+		if (useAttraction->boolValue()) startTimerHz(30);
+		else stopTimer();
 	}
 }
 
@@ -434,10 +446,39 @@ void Morpher::loadJSONDataInternal(var data)
 	values->clear();
 	values->loadJSONData(data.getProperty("values", var()));
 	BaseManager::loadJSONDataInternal(data);
+
 }
 
 void Morpher::clear()
 {
 	BaseManager::clear();
 }
+
+void Morpher::timerCallback()
+{
+	if (blendMode->getValueDataAsEnum<BlendMode>() != Voronoi) return;
+	attractionDir.setXY(0, 0);
+	Point<float> mp = mainTarget->position->getPoint();
+	int num = 0;
+	for (auto &t : items)
+	{
+		if (!t->enabled->boolValue()) continue;
+		attractionDir += (t->position->getPoint() - mp) * t->attraction->floatValue();
+		num++;
+	}
+
+
+	float timeFactor = getTimerInterval() / 1000.0f;
+	AttractionMode am = attractionMode->getValueDataAsEnum<AttractionMode>();
+	switch (am)
+	{
+	case SIMPLE:
+		mainTarget->position->setPoint(mp + attractionDir * timeFactor*attractionSpeed->floatValue());
+		break;
+
+	case PHYSICS:
+		break;
+	}
+}
+
 
