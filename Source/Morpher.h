@@ -35,6 +35,7 @@ public:
 	BoolParameter * showDebug;
 	BoolParameter * useAttraction;
 	FloatParameter * attractionSpeed;
+	FloatParameter * attractionDecay;
 
 	Point<float> attractionDir;
 

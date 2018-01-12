@@ -40,6 +40,7 @@ Morpher::Morpher() :
 	attractionSpeed = addFloatParameter("Attraction speed", "Speed of the attraction. Effects depends on attraction mode", 1, .1f, 20, false);
 	attractionMode = addEnumParameter("Attraction Mode", "Mode for attraction", false);
 	attractionMode->addOption("Simple", SIMPLE)->addOption("Physics", PHYSICS);
+	attractionDecay = addFloatParameter("Attraction Decay", "Decay rate of the attraction on each target (1 = empty an attraction of 1 in 1s)",0,0,10, false);
 
 	showDebug = addBoolParameter("Show Debug", "Draw debug information on voronoi weights", false);
 
@@ -395,6 +396,7 @@ void Morpher::onContainerParameterChanged(Parameter * p)
 	{
 		attractionSpeed->setEnabled(useAttraction->boolValue());
 		attractionMode->setEnabled(useAttraction->boolValue());
+		attractionDecay->setEnabled(useAttraction->boolValue());
 		if (useAttraction->boolValue()) startTimerHz(30);
 		else stopTimer();
 	}
@@ -457,6 +459,9 @@ void Morpher::clear()
 void Morpher::timerCallback()
 {
 	if (blendMode->getValueDataAsEnum<BlendMode>() != Voronoi) return;
+
+	float timeFactor = getTimerInterval() / 1000.0f;
+
 	attractionDir.setXY(0, 0);
 	Point<float> mp = mainTarget->position->getPoint();
 	int num = 0;
@@ -464,11 +469,11 @@ void Morpher::timerCallback()
 	{
 		if (!t->enabled->boolValue()) continue;
 		attractionDir += (t->position->getPoint() - mp) * t->attraction->floatValue();
+		t->attraction->setValue(t->attraction->floatValue() - attractionDecay->floatValue()*timeFactor);
 		num++;
 	}
 
 
-	float timeFactor = getTimerInterval() / 1000.0f;
 	AttractionMode am = attractionMode->getValueDataAsEnum<AttractionMode>();
 	switch (am)
 	{
@@ -479,6 +484,8 @@ void Morpher::timerCallback()
 	case PHYSICS:
 		break;
 	}
+
+	
 }
 
 

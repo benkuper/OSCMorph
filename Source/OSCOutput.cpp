@@ -85,6 +85,9 @@ void OSCOutput::processMessage(const OSCMessage & msg)
 	String address = msg.getAddressPattern().toString();
 	//DBG("Receive : " << address << " with " << msg.size() << " args");
 	
+	StringArray addSplit;
+	addSplit.addTokens(address, "/", "\"");
+
 	if (logIncoming->boolValue())
 	{
 		NLOG(niceName, "Receive OSC : " << msg.getAddressPattern().toString());
@@ -96,16 +99,18 @@ void OSCOutput::processMessage(const OSCMessage & msg)
 		{
 			Morpher::getInstance()->setTargetPosition(getFloatArg(msg[0]) - .5f, getFloatArg(msg[1]) - .5f);
 		}
+	}else if(addSplit[1] == "attraction")
+	{
+		String id = addSplit[2];
+		MorphTarget * mt = Morpher::getInstance()->getItemWithName(id, true);
+		if (mt != nullptr && msg.size() >= 1 && Morpher::getInstance()->blendMode->getValueDataAsEnum<Morpher::BlendMode>() == Morpher::Voronoi) mt->attraction->setValue(getFloatArg(msg[0]));
 	} else
 	{
-		String id = address.substring(1);
+		String id = addSplit[1];
 		
 		MorphTarget * mt = Morpher::getInstance()->getItemWithName(id, true);
 
-		if (mt != nullptr && msg.size() >= 1 && Morpher::getInstance()->blendMode->getValueDataAsEnum<Morpher::BlendMode>() == Morpher::Weights)
-		{
-			mt->weight->setValue(getFloatArg(msg[0]));
-		}
+		if (mt != nullptr && msg.size() >= 1 && Morpher::getInstance()->blendMode->getValueDataAsEnum<Morpher::BlendMode>() == Morpher::Weights) mt->weight->setValue(getFloatArg(msg[0]));
 
 		Morpher::getInstance()->computeWeights();
 	}
