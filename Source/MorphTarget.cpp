@@ -21,8 +21,6 @@ MorphTarget::MorphTarget(const String &name) :
 	color = new ColorParameter("Color", "color", Colour::fromHSV(rnd.nextFloat(), 1, 1, 1));
 	addParameter(color);
 
-	nameParam->hideInEditor = false;
-
 	position = addPoint2DParameter("Position", "Relative Position");
 	position->setBounds(-100, -100, 100, 100);
 	//position->hideInEditor = true;

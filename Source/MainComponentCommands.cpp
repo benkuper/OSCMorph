@@ -70,14 +70,16 @@ void MainContentComponent::getCommandInfo(CommandID commandID, ApplicationComman
 		break;
 
 	case CommandIDs::undo:
-		//result.setInfo("Undo " + UndoMaster::getInstance()->getUndoDescription(),"Undo the last action", category, 0);
-		//result.defaultKeypresses.add(KeyPress('z', ModifierKeys::ctrlModifier, 0));
+		result.setInfo("Undo " + UndoMaster::getInstance()->getUndoDescription(),"Undo the last action", category, 0);
+		result.setActive(UndoMaster::getInstance()->canUndo()); 
+		result.defaultKeypresses.add(KeyPress('z', ModifierKeys::ctrlModifier, 0));
 		break;
 
 	case CommandIDs::redo:
-		//result.setInfo("Redo " + UndoMaster::getInstance()->getRedoDescription(), "Redo the undone action", category, 0);
-		//result.defaultKeypresses.add(KeyPress('z', ModifierKeys::shiftModifier | ModifierKeys::commandModifier, 0));
-		//result.defaultKeypresses.add(KeyPress('y', ModifierKeys::ctrlModifier, 0));
+		result.setInfo("Redo " + UndoMaster::getInstance()->getRedoDescription(), "Redo the undone action", category, 0);
+		result.setActive(UndoMaster::getInstance()->canRedo());
+		result.defaultKeypresses.add(KeyPress('z', ModifierKeys::shiftModifier | ModifierKeys::commandModifier, 0));
+		result.defaultKeypresses.add(KeyPress('y', ModifierKeys::ctrlModifier, 0));
 		break;
 
 	default:
@@ -94,9 +96,9 @@ void MainContentComponent::getAllCommands(Array<CommandID>& commands) {
 		CommandIDs::openLastDocument,
 		CommandIDs::save,
 		CommandIDs::saveAs,
-		CommandIDs::checkForUpdates
-		//CommandIDs::undo,
-		//CommandIDs::redo
+		CommandIDs::checkForUpdates,
+		CommandIDs::undo,
+		CommandIDs::redo
 	};
 
 	commands.addArray(ids, numElementsInArray(ids));
@@ -196,11 +198,11 @@ bool MainContentComponent::perform(const InvocationInfo& info) {
 		break;
 
 	case CommandIDs::undo:
-		//UndoMaster::getInstance()->undo();
+		UndoMaster::getInstance()->undo();
 		break;
 
 	case CommandIDs::redo:
-		//UndoMaster::getInstance()->redo();
+		UndoMaster::getInstance()->redo();
 		break;
 
 	default:
@@ -215,9 +217,6 @@ void MainContentComponent::menuItemSelected(int menuItemID, int topLevelMenuInde
 {
 	DBG("Menu item selected " << menuItemID << ", " << topLevelMenuIndex);
 
-#if JUCE_MAC && JUCE_MAJOR_VERSION >= 5
-	//topLevelMenuIndex--; //On mac and juce 5, first menu index is 1 (because of the App menu); -> NOT THE CASE ANYMORE, keep that just as reminder
-#endif
 
 	String menuName = getMenuBarNames()[topLevelMenuIndex];
 

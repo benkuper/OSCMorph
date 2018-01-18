@@ -31,8 +31,6 @@ MorphTargetViewUI::MorphTargetViewUI(MorphTarget * mt) :
 	grabber->toBack();
 	
 	removeChildComponent(resizer);
-	//removeChildComponent(enabledBT);
-	removeChildComponent(nameUI);
 
 	isMain = mt == Morpher::getInstance()->mainTarget;
 	if(isMain) targetImage = ImageCache::getFromMemory(BinaryData::target_png, BinaryData::target_pngSize);
