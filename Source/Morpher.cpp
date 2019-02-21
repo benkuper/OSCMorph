@@ -469,7 +469,7 @@ void Morpher::timerCallback()
 	{
 		if (!t->enabled->boolValue()) continue;
 		attractionDir += (t->position->getPoint() - mp) * t->attraction->floatValue();
-		t->attraction->setValue(t->attraction->floatValue() - attractionDecay->floatValue()*timeFactor);
+		t->attraction->setValue(t->attraction->floatValue() - attractionDecay->floatValue() * t->attractionDecay->floatValue() * timeFactor);
 		num++;
 	}
 

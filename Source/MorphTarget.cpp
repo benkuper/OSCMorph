@@ -29,6 +29,7 @@ MorphTarget::MorphTarget(const String &name) :
 	addChildControllableContainer(&values);
 
 	attraction = addFloatParameter("Attraction", "Attraction of this target", 0, 0, 1);
+	attractionDecay = addFloatParameter("Decay Factor", "Decay factor for attraction, multiplied with Morpher global decay factor", 1, 0, 1);
 
 	if (Morpher::getInstanceWithoutCreating() != nullptr)
 	{

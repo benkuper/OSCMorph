@@ -26,6 +26,7 @@ public:
 
 	FloatParameter * weight;
 	FloatParameter * attraction;
+	FloatParameter * attractionDecay;
 
 	ControllableContainer values;
 

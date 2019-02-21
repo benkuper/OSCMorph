@@ -16,6 +16,8 @@ MorphTargetViewUI::MorphTargetViewUI(MorphTarget * mt) :
 {
 	autoDrawHighlightWhenSelected = false;
 		
+	removeChildComponent(&itemLabel);
+
 	margin = 0;
 	headerHeight = 15;
 	
