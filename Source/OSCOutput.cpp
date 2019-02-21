@@ -143,7 +143,7 @@ float OSCOutput::getFloatArg(OSCArgument a)
 int OSCOutput::getIntArg(OSCArgument a)
 {
 	if (a.isInt32()) return a.getInt32();
-	if (a.isFloat32()) return roundFloatToInt(a.getFloat32());
+	if (a.isFloat32()) return roundToInt(a.getFloat32());
 	if (a.isString()) return a.getString().getIntValue();
 	return 0;
 }
@@ -153,7 +153,7 @@ String OSCOutput::getStringArg(OSCArgument a)
 	if (a.isString()) return a.getString();
 	if (a.isInt32()) return String(a.getInt32());
 	if (a.isFloat32()) return String(a.getFloat32());
-	return String::empty;
+	return String();
 }
 
 var OSCOutput::argumentToVar(const OSCArgument & a)

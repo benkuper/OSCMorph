@@ -17,7 +17,7 @@ class MorphTarget :
 	BaseManager<GenericControllableItem>::Listener
 {
 public:
-	MorphTarget(const String &name = "MorphTarget");
+	MorphTarget(const String &name = "MorphTarget", bool isMain = false);
 	~MorphTarget();
 
 	bool isMain;

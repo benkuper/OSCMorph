@@ -16,7 +16,7 @@ class MorphEngine :
 	public Engine
 {
 public:
-	MorphEngine(ApplicationProperties * appProperties, const String &appVersion);
+	MorphEngine();
 	~MorphEngine();
 
 	void clearInternal() override;

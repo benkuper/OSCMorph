@@ -12,8 +12,8 @@ Author:  Martin Hermant
 #include "Morpher.h"
 #include "OSCOutputManager.h"
 
-MorphEngine::MorphEngine(ApplicationProperties * appProperties, const String &appVersion) :
-	Engine("Morph", ".morph", appProperties, appVersion)
+MorphEngine::MorphEngine() :
+	Engine("Morph", ".morph")
 {
 	//init here
 	Engine::mainEngine = this;
@@ -27,13 +27,15 @@ MorphEngine::~MorphEngine()
 	//Application-end cleanup, nothing should be recreated after this
 
 	//delete singletons here
-	Morpher::deleteInstance();
 	OSCOutputManager::deleteInstance();
+	Morpher::deleteInstance();
 
 }
 
 void MorphEngine::clearInternal()
 {
+	isClearing = true;
+
 	//clear
 	Morpher::getInstance()->clear();
 	OSCOutputManager::getInstance()->clear();

@@ -15,6 +15,7 @@ MorpherViewUI::MorpherViewUI(const String & contentName, Morpher * _manager) :
 {
 	animateItemOnAdd = false;
 
+
 	//canNavigate = false;
 	setupBGImage();
 	manager->addAsyncContainerListener(this);
@@ -290,6 +291,13 @@ void MorpherViewUI::mouseDrag(const MouseEvent & e)
 	{
 		manager->mainTarget->viewUIPosition->setPoint(getViewMousePosition().toFloat()/viewZoom);
 	}
+}
+
+void MorpherViewUI::mouseDoubleClick(const MouseEvent & e)
+{
+	BaseManagerShapeShifterViewUI::mouseDoubleClick(e);
+
+	manager->addItem(getViewMousePosition().toFloat());
 }
 
 bool MorpherViewUI::keyPressed(const KeyPress & e)

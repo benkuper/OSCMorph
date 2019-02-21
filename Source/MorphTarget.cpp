@@ -11,9 +11,9 @@
 #include "MorphTarget.h"
 #include "Morpher.h"
 
-MorphTarget::MorphTarget(const String &name) :
+MorphTarget::MorphTarget(const String &name, bool isMain) :
 	BaseItem(name),
-	isMain(false),
+	isMain(isMain),
 	values("Values")
 {
 	Random rnd;
@@ -25,22 +25,21 @@ MorphTarget::MorphTarget(const String &name) :
 	position->setBounds(-100, -100, 100, 100);
 	//position->hideInEditor = true;
 
-	weight = addFloatParameter("Weight", "Current weight of this target", 0, 0, 1);
-	addChildControllableContainer(&values);
-
-	attraction = addFloatParameter("Attraction", "Attraction of this target", 0, 0, 1);
-	attractionDecay = addFloatParameter("Decay Factor", "Decay factor for attraction, multiplied with Morpher global decay factor", 1, 0, 1);
-
-	if (Morpher::getInstanceWithoutCreating() != nullptr)
+	if (isMain)
+	{
+		values.hideInEditor = true; 
+	}else
 	{
 		Morpher::getInstance()->values->addBaseManagerListener(this);
 		for (GenericControllableItem * i : Morpher::getInstance()->values->items) addValueFromItem(i);
 		
-		position->isEditable = false;
-	} else
-	{
-		isMain = true;
-		values.hideInEditor = true;
+		position->setControllableFeedbackOnly(true);
+
+		weight = addFloatParameter("Weight", "Current weight of this target", 0, 0, 1);
+		addChildControllableContainer(&values);
+
+		attraction = addFloatParameter("Attraction", "Attraction of this target", 0, 0, 1);
+		attractionDecay = addFloatParameter("Decay Factor", "Decay factor for attraction, multiplied with Morpher global decay factor", 1, 0, 1);
 	}
 
 	values.editorIsCollapsed = false;

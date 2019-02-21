@@ -44,7 +44,7 @@ Morpher::Morpher() :
 
 	showDebug = addBoolParameter("Show Debug", "Draw debug information on voronoi weights", false);
 
-	mainTarget = new MorphTarget("Main");
+	mainTarget = new MorphTarget("Main", true);
 	mainTarget->color->setColor(Colours::transparentBlack);
 	addChildControllableContainer(mainTarget);
 	mainTarget->showInspectorOnSelect = false;
@@ -364,6 +364,7 @@ void Morpher::setTargetPosition(float x, float y)
 
 void Morpher::addItemInternal(MorphTarget * mt, var data)
 {
+	controllableContainers.move(controllableContainers.indexOf(values.get()), 0);
 	computeZones();
 }
 

@@ -24,7 +24,7 @@ public:
 	juce_DeclareSingleton(Morpher,true);
 
 	Morpher();
-	~Morpher();
+	virtual ~Morpher();
 
 	//ui
 	StringParameter * bgImagePath;
