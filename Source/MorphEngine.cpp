@@ -38,6 +38,7 @@ void MorphEngine::clearInternal()
 
 	//clear
 	Morpher::getInstance()->clear();
+	Morpher::getInstance()->values->clear();
 	OSCOutputManager::getInstance()->clear();
 
 }

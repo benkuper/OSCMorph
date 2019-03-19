@@ -314,6 +314,22 @@ void Morpher::computeWeights()
 		}
 		break;
 
+		case Controllable::POINT3D:
+		{
+
+			Vector3D<float> pVal;
+			for (MorphTarget * imt : items)
+			{
+				Point3DParameter * tC = (Point3DParameter *)imt->values.getControllableByName(i->controllable->shortName);
+				if (tC != nullptr) pVal += tC->getVector() * imt->weight->floatValue() / totalWeight;
+				else DBG("Controllable null with name : " << i->controllable->shortName);
+			}
+
+			//DBG("Assign final value : " << i->controllable->shortName << " / " << val);
+			((Point3DParameter *)i->controllable)->setVector(pVal);
+		}
+		break;
+
 
 		case Controllable::COLOR:
 		{
@@ -446,8 +462,7 @@ var Morpher::getJSONData()
 
 void Morpher::loadJSONDataInternal(var data)
 {
-	values->clear();
-	values->loadJSONData(data.getProperty("values", var()));
+	values->loadJSONData(data.getProperty("values", var()), true);
 	BaseManager::loadJSONDataInternal(data);
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="q57Bzf" name="OSCMorph" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="guiapp" version="1.0.6"
+              splashScreenColour="Dark" projectType="guiapp" version="1.0.7"
               bundleIdentifier="com.benkuper.OSCMorph" includeBinaryInAppConfig="1"
               cppLanguageStandard="11" companyCopyright="" jucerVersion="5.4.3">
   <MAINGROUP id="bvpmYj" name="OSCMorph">

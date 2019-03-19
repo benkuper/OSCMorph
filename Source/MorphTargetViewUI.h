@@ -34,7 +34,7 @@ public:
 
 	void controllableFeedbackUpdateInternal(Controllable * c) override;
 
-	class MGrabber : public BaseItemUI::Grabber
+	class MGrabber : public Grabber
 	{
 	public:
 		MGrabber();

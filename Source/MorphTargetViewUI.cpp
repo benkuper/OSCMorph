@@ -12,9 +12,9 @@
 #include "Morpher.h"
 
 MorphTargetViewUI::MorphTargetViewUI(MorphTarget * mt) :
-	BaseItemUI<MorphTarget>(mt, ResizeMode::ALL, true)
+	BaseItemUI<MorphTarget>(mt, Direction::NONE, Direction::ALL)
 {
-	autoDrawHighlightWhenSelected = false;
+	autoDrawContourWhenSelected = false;
 		
 	removeChildComponent(&itemLabel);
 
